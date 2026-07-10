@@ -1,0 +1,11 @@
+{
+  "name": "dodos-digest",
+  "version": "1.0.0",
+  "description": "A gentle daily digest of cute animals, made with love for Dodo.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
