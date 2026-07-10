@@ -117,7 +117,7 @@ main { padding-bottom: 3rem; }
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
 }
-.placeholder svg { width: 45%; height: auto; opacity: 0.9; }
+.placeholder svg { width: 45%; aspect-ratio: 3 / 2; height: auto; opacity: 0.9; }
 .shimmer {
   position: absolute; inset: 0; overflow: hidden;
 }
@@ -625,7 +625,7 @@ async function prependFresh() {
 /* ================= Card rendering ================= */
 function makePlaceholder() {
   const wrap = el("div", "placeholder");
-  wrap.innerHTML = '<svg aria-hidden="true"><use href="#cat-loaf"/></svg>';
+  wrap.innerHTML = '<svg aria-hidden="true" viewBox="0 0 120 80"><use href="#cat-loaf"/></svg>';
   const shimmer = el("div", "shimmer");
   wrap.appendChild(shimmer);
   return wrap;
