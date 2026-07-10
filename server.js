@@ -37,6 +37,21 @@ app.get("/api/feed", (req, res) => {
   res.json(body);
 });
 
+// Only store media URLs that point at the content hosts we actually serve
+// from — anything else rendered later on the grownups page would be a
+// stored-content injection into MK's browser.
+const ALLOWED_MEDIA_HOSTS = /(^|\.)thecatapi\.com$|^cataas\.com$|(^|\.)pexels\.com$/i;
+function safeMediaUrl(value) {
+  if (typeof value !== "string" || !value || value.length > 2000) return null;
+  try {
+    const u = new URL(value);
+    if (u.protocol !== "https:" || !ALLOWED_MEDIA_HOSTS.test(u.hostname)) return null;
+    return value;
+  } catch (err) {
+    return null;
+  }
+}
+
 // Upsert a rating with a full item snapshot so the grownups page can render
 // thumbnails without ever re-resolving upstream APIs. rating "none" removes it.
 app.post("/api/rating", express.json(), (req, res) => {
@@ -50,12 +65,14 @@ app.post("/api/rating", express.json(), (req, res) => {
     if (b.rating === "none") {
       ratings.remove(b.itemId);
     } else {
+      const src = safeMediaUrl(b.src);
+      if (!src) return res.status(400).json({ error: "bad input" });
       ratings.upsert({
         itemId: b.itemId,
         itemType: typeof b.itemType === "string" ? b.itemType : "photo",
-        src: typeof b.src === "string" ? b.src.slice(0, 2000) : "",
-        poster: typeof b.poster === "string" ? b.poster.slice(0, 2000) : null,
-        source: typeof b.source === "string" ? b.source : "unknown",
+        src,
+        poster: safeMediaUrl(b.poster),
+        source: typeof b.source === "string" ? b.source.slice(0, 40) : "unknown",
         credit: b.credit && typeof b.credit === "object"
           ? { name: String(b.credit.name || "").slice(0, 200), link: String(b.credit.link || "").slice(0, 2000) }
           : null,
@@ -82,8 +99,13 @@ app.get("/api/ratings", adminGate, (req, res) => {
 });
 
 app.delete("/api/rating/:itemId", adminGate, (req, res) => {
-  ratings.remove(req.params.itemId);
-  res.json({ success: true });
+  try {
+    ratings.remove(req.params.itemId);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[dodos-digest] rating delete failed:", err);
+    res.status(503).json({ error: "could not save" });
+  }
 });
 
 // MK's review page — lives outside public/ so the obscure route is the only way in.

@@ -100,9 +100,13 @@ function renderItem(entry) {
   undo.addEventListener("click", async () => {
     undo.disabled = true;
     try {
-      await fetch("/api/rating/" + encodeURIComponent(entry.itemId) + qs, { method: "DELETE" });
+      const res = await fetch("/api/rating/" + encodeURIComponent(entry.itemId) + qs, { method: "DELETE" });
+      if (!res.ok) throw new Error(res.status);
       load();
-    } catch (e) { undo.disabled = false; }
+    } catch (e) {
+      undo.disabled = false;
+      undo.textContent = "Failed — try again";
+    }
   });
   div.appendChild(undo);
   return div;

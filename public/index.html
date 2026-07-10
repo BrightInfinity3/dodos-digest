@@ -188,11 +188,11 @@ main { padding-bottom: 3rem; }
   padding: 1rem; text-align: center; font-weight: 700;
 }
 .rated-chip .change-link {
-  display: inline-block; margin-left: 0.6rem;
+  display: inline-block; margin-left: 0.35rem;
   font-size: 1.125rem; font-weight: 400;
   color: var(--ink-soft); background: none; border: none;
   text-decoration: underline; cursor: pointer;
-  font-family: var(--sans); padding: 0.3rem;
+  font-family: var(--sans); padding: 0.6rem 0.9rem; min-height: 2.75rem;
   touch-action: manipulation;
 }
 
@@ -446,6 +446,7 @@ const STALE_MS = 45 * 60 * 1000;
 const KEEP_ITEMS = 60;
 const $feed = document.getElementById("feed");
 const $sentinel = document.getElementById("sentinel");
+const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 const state = {
   items: new Map(),            // id -> item, insertion order = feed order
   ratings: loadLS(RATINGS_KEY, {}),
@@ -455,8 +456,11 @@ const state = {
   lastFetch: 0,
   loading: false,
   coolUntil: 0,
-  reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  reducedMotion: motionQuery.matches,
 };
+if (motionQuery.addEventListener) {
+  motionQuery.addEventListener("change", (e) => { state.reducedMotion = e.matches; });
+}
 
 /* ================= Masthead ================= */
 document.getElementById("dateline").textContent =
@@ -476,13 +480,19 @@ function saveFeedSoon() {
   saveTimer = setTimeout(saveFeedNow, 400);
 }
 function saveFeedNow() {
-  const ordered = [...$feed.querySelectorAll(".card[data-id]")]
-    .map((c) => state.items.get(c.dataset.id))
-    .filter(Boolean)
-    .slice(-KEEP_ITEMS);
+  const cards = [...$feed.querySelectorAll(".card[data-id]")];
+  if (cards.length === 0) return; // never overwrite a good save with emptiness
+  // Keep a window of cards around wherever she currently is, anchored by the
+  // topmost visible card, so both scroll-back and reopen land where she left off.
+  let anchorIdx = cards.findIndex((c) => c.getBoundingClientRect().bottom > 0);
+  if (anchorIdx === -1) anchorIdx = cards.length - 1;
+  const start = Math.max(0, Math.min(anchorIdx - 8, cards.length - KEEP_ITEMS));
+  const kept = cards.slice(start, start + KEEP_ITEMS);
+  const anchor = cards[anchorIdx];
   saveLS(FEED_KEY, {
-    items: ordered,
-    scrollY: window.scrollY,
+    items: kept.map((c) => state.items.get(c.dataset.id)).filter(Boolean),
+    anchorId: anchor.dataset.id,
+    anchorOffset: Math.round(anchor.getBoundingClientRect().top),
     savedAt: state.lastFetch || Date.now(),
   });
 }
@@ -503,7 +513,12 @@ function restoreFeed() {
   if (rendered === 0) return false;
   state.lastFetch = saved.savedAt || 0;
   requestAnimationFrame(() => {
-    window.scrollTo(0, saved.scrollY || 0);
+    const anchor = saved.anchorId &&
+      $feed.querySelector('.card[data-id="' + CSS.escape(saved.anchorId) + '"]');
+    if (anchor) {
+      const top = anchor.getBoundingClientRect().top + window.scrollY - (saved.anchorOffset || 0);
+      window.scrollTo(0, Math.max(0, top));
+    }
   });
   return true;
 }
@@ -547,8 +562,16 @@ function clearFirstLoadShimmer() {
 }
 
 let errorRetried = false;
+let retryTimer = null;
+
+function nearBottom() {
+  return document.documentElement.scrollHeight - (window.scrollY + window.innerHeight) <
+    window.innerHeight * 2.5;
+}
+
 async function loadMore(count) {
   if (state.loading || Date.now() < state.coolUntil) return;
+  clearTimeout(retryTimer);
   state.loading = true;
   removeStateCard();
   const isFirst = state.items.size === 0;
@@ -558,19 +581,26 @@ async function loadMore(count) {
     const fresh = freshItemsFrom(data);
     clearFirstLoadShimmer();
     if (fresh.length === 0) {
-      state.coolUntil = Date.now() + ((data.retryAfter || 30) * 1000);
-      if ((data.items || []).length === 0 && !errorRetried) {
-        // Cold server pools — one quiet retry before showing the nap card.
-        errorRetried = true;
-        state.coolUntil = 0;
-        setTimeout(() => { state.loading = false; loadMore(count); }, 4000);
-        return;
+      const waitMs = (data.retryAfter || 30) * 1000;
+      state.coolUntil = Date.now() + waitMs;
+      if (state.items.size === 0) {
+        // Nothing has ever loaded (cold server, upstreams warming) — keep trying
+        // quietly on our own; the button is just for the impatient.
+        showStateCard("napping", "The kitties are waking up — one moment!",
+          "🐾 Wake the kitties", () => {
+            state.coolUntil = 0;
+            loadMore(count);
+          });
+        retryTimer = setTimeout(() => { state.coolUntil = 0; loadMore(count); }, waitMs + 400);
+      } else if ((data.items || []).length === 0) {
+        showStateCard("napping", "That’s all the kitties for now! They’ll be back after their nap. ❤",
+          "Back to the top", () => {
+            window.scrollTo({ top: 0, behavior: state.reducedMotion ? "auto" : "smooth" });
+            removeStateCard();
+          }, "New kitties arrive every day.");
       }
-      showStateCard("napping", "That’s all the kitties for now! They’ll be back after their nap. ❤",
-        "Back to the top", () => {
-          window.scrollTo({ top: 0, behavior: state.reducedMotion ? "auto" : "smooth" });
-          removeStateCard();
-        }, "New kitties arrive every day.");
+      // (items came back but were all repeats: cool down silently; the scroll
+      // fallback below asks again once the cooldown passes)
     } else {
       errorRetried = false;
       for (const item of fresh) {
@@ -579,21 +609,25 @@ async function loadMore(count) {
       }
       state.lastFetch = Date.now();
       saveFeedSoon();
+      // A small batch may not push the sentinel out of its margin, which would
+      // stall the observer forever — top up until the page is comfortably tall.
+      requestAnimationFrame(() => { if (nearBottom()) loadMore(8); });
     }
   } catch (err) {
     clearFirstLoadShimmer();
     if (!errorRetried) {
       errorRetried = true;
-      setTimeout(() => { state.loading = false; loadMore(count); }, 2000);
+      retryTimer = setTimeout(() => loadMore(count), 2000);
       return;
     }
+    state.coolUntil = Date.now() + 15000;
     if (!navigator.onLine) {
       showStateCard("napping", "No internet right now. The kitties will be here when you’re back!");
     } else {
       showStateCard("oops", "The kitties are napping — try again in a moment!",
         "🐾 Wake the kitties", () => {
           errorRetried = false;
-          removeStateCard();
+          state.coolUntil = 0;
           loadMore(count);
         });
     }
@@ -602,9 +636,23 @@ async function loadMore(count) {
   }
 }
 
+// Belt-and-suspenders for the IntersectionObserver: it only fires on crossings,
+// so a stalled sentinel would otherwise dead-end the feed. Cheap guards inside.
+let scrollTick = false;
+window.addEventListener("scroll", () => {
+  if (scrollTick) return;
+  scrollTick = true;
+  setTimeout(() => {
+    scrollTick = false;
+    if (nearBottom()) loadMore(8);
+  }, 400);
+}, { passive: true });
+
+// Returns how many kitties were added; -1 when it couldn't even try.
 async function prependFresh() {
-  if (state.loading) return;
+  if (state.loading) return -1;
   state.loading = true;
+  let added = 0;
   try {
     const data = await fetchBatch(8);
     const fresh = freshItemsFrom(data);
@@ -615,11 +663,19 @@ async function prependFresh() {
       if (firstCard) $feed.insertBefore(card, $feed.firstChild);
       else $feed.appendChild(card);
     }
-    state.lastFetch = Date.now();
-    saveFeedSoon();
-  } catch (err) { /* pill stays available; sentinel path will surface problems */ }
+    added = fresh.length;
+    if (added > 0) {
+      state.lastFetch = Date.now();
+      saveFeedSoon();
+    }
+  } catch (err) {
+    added = -1;
+  }
   state.loading = false;
-  window.scrollTo({ top: 0, behavior: state.reducedMotion ? "auto" : "smooth" });
+  if (added > 0) {
+    window.scrollTo({ top: 0, behavior: state.reducedMotion ? "auto" : "smooth" });
+  }
+  return added;
 }
 
 /* ================= Card rendering ================= */
@@ -665,7 +721,11 @@ function renderCard(item) {
       posterImg.onload = () => frame.classList.add("loaded");
       posterImg.src = item.poster;
     }
-    video.addEventListener("error", () => removeBrokenCard(card, item));
+    video.addEventListener("error", () => removeBrokenCard(card, item, video));
+    video.addEventListener("playing", () => {
+      const stale = frame.querySelector(".big-play");
+      if (stale) stale.remove();
+    });
     frame.appendChild(video);
 
     const chip = el("span", "chip", "🎬 Video");
@@ -693,7 +753,7 @@ function renderCard(item) {
     img.decoding = "async";
     img.alt = (item.type === "gif" ? "Cat GIF" : "Cat photo") + (item.credit ? " from " + item.credit.name : "");
     img.addEventListener("load", () => frame.classList.add("loaded"));
-    img.addEventListener("error", () => removeBrokenCard(card, item));
+    img.addEventListener("error", () => removeBrokenCard(card, item, img));
     img.src = item.src;
     frame.appendChild(img);
     if (item.type === "gif") {
@@ -715,7 +775,7 @@ function renderCard(item) {
   if (credit) {
     const p = el("p", "credit");
     p.append(credit.pre);
-    if (credit.link) {
+    if (credit.link && /^https?:\/\//i.test(credit.link)) {
       const a = el("a", null, credit.name);
       a.href = credit.link;
       a.target = "_blank";
@@ -731,20 +791,35 @@ function renderCard(item) {
   return card;
 }
 
-function removeBrokenCard(card, item) {
+// Media that errors while OFFLINE isn't broken — retry it when we're back,
+// and never let it delete the card (that would erase her saved feed).
+const mediaRetryQueue = [];
+function removeBrokenCard(card, item, media) {
+  if (media && !media.isConnected) return; // card content was replaced (e.g. dismissed strip)
+  if (!navigator.onLine) {
+    mediaRetryQueue.push({ media, src: item.src });
+    return;
+  }
   card.remove();
   state.items.delete(item.id);
   saveFeedSoon();
+}
+function retryQueuedMedia() {
+  while (mediaRetryQueue.length) {
+    const { media, src } = mediaRetryQueue.pop();
+    if (media && media.isConnected) {
+      media.src = "";
+      media.src = src;
+    }
+  }
 }
 
 function makeRateRow(item, card) {
   const row = el("div", "rate-row");
   const loveBtn = el("button", "rate-btn btn-love");
   loveBtn.innerHTML = '<span class="thumb" aria-hidden="true">👍</span>Love it!';
-  loveBtn.setAttribute("aria-pressed", "false");
   const passBtn = el("button", "rate-btn btn-pass");
   passBtn.innerHTML = '<span class="thumb" aria-hidden="true">👎</span>Not for me';
-  passBtn.setAttribute("aria-pressed", "false");
   loveBtn.addEventListener("click", () => rateUp(item, card, loveBtn));
   passBtn.addEventListener("click", () => rateDown(item, card, passBtn));
   row.append(loveBtn, passBtn);
@@ -761,6 +836,7 @@ function makeLovedChip(item, card) {
     const row = makeRateRow(item, card);
     chip.replaceWith(prompt);
     prompt.after(row);
+    row.querySelector(".btn-love").focus({ preventScroll: true });
   });
   chip.appendChild(change);
   return chip;
@@ -773,39 +849,57 @@ function setLocalRating(item, rating) {
   saveLS(RATINGS_KEY, state.ratings);
 }
 
+// Outbox-first: every rating is queued in localStorage BEFORE the network is
+// tried, and removed only on confirmed success — a tap followed instantly by
+// pressing the home button (her usual move) can never lose a rating.
+function sendPayload(payload) {
+  return fetch("/api/rating", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    keepalive: true,
+    body: JSON.stringify(payload),
+  }).then((res) => {
+    if (res.ok) {
+      const i = state.outbox.indexOf(payload);
+      if (i !== -1) {
+        state.outbox.splice(i, 1);
+        saveLS(OUTBOX_KEY, state.outbox);
+      }
+      return true;
+    }
+    return false;
+  }).catch(() => false);
+}
+
 function postRating(item, rating) {
   const payload = {
     itemId: item.id, itemType: item.type, src: item.src,
     poster: item.poster || null, source: item.source,
     credit: item.credit || null, rating,
   };
-  fetch("/api/rating", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  }).then((res) => { if (!res.ok) throw new Error("save failed"); })
-    .catch(() => {
-      state.outbox.push(payload);
-      saveLS(OUTBOX_KEY, state.outbox);
-    });
+  state.outbox.push(payload);
+  saveLS(OUTBOX_KEY, state.outbox);
+  sendPayload(payload);
 }
 
+let flushing = false;
 async function flushOutbox() {
-  if (state.outbox.length === 0) return;
-  const pending = state.outbox.slice();
-  const stillPending = [];
-  for (const payload of pending) {
-    try {
-      const res = await fetch("/api/rating", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) stillPending.push(payload);
-    } catch (e) { stillPending.push(payload); }
+  if (flushing || state.outbox.length === 0) return;
+  flushing = true;
+  try {
+    // Newest rating per kitty wins; drop superseded entries so a failed old
+    // "down" can never replay over a later "bring it back".
+    const latest = new Map();
+    for (const p of state.outbox) latest.set(p.itemId, p);
+    state.outbox = state.outbox.filter((p) => latest.get(p.itemId) === p);
+    saveLS(OUTBOX_KEY, state.outbox);
+    for (const payload of [...state.outbox]) {
+      const ok = await sendPayload(payload);
+      if (!ok) break; // try again on the next flush; keeps ordering intact
+    }
+  } finally {
+    flushing = false;
   }
-  state.outbox = stillPending;
-  saveLS(OUTBOX_KEY, state.outbox);
 }
 
 const SWEET_WORDS = ["Purrfect!", "Lovely!", "So sweet!", "What a cutie!", "Aww!"];
@@ -857,22 +951,26 @@ function rateDown(item, card, btn) {
       const restored = renderCard(item);
       card.replaceWith(restored);
       announce("It’s back!");
+      const loveBtn = restored.querySelector(".btn-love");
+      if (loveBtn) loveBtn.focus({ preventScroll: true });
       saveFeedSoon();
     });
     strip.appendChild(back);
     card.appendChild(strip);
+    back.focus({ preventScroll: true });
     saveFeedSoon();
   };
 
   if (state.reducedMotion) {
     showStrip();
   } else {
+    // The visual collapse rides on rAF, but the state change must not: rAF
+    // never fires in a backgrounded page, and the card would be stuck mid-
+    // dismissal if she switches apps right after tapping.
     card.style.maxHeight = card.offsetHeight + "px";
-    requestAnimationFrame(() => {
-      card.classList.add("dismissing");
-      card.style.maxHeight = "6.5rem";
-      setTimeout(showStrip, 620);
-    });
+    card.classList.add("dismissing");
+    requestAnimationFrame(() => { card.style.maxHeight = "6.5rem"; });
+    setTimeout(showStrip, 620);
   }
 }
 
@@ -974,7 +1072,12 @@ const videoObserver = new IntersectionObserver((entries) => {
     const video = entry.target;
     if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
       const attempt = video.play();
-      if (attempt) attempt.catch(() => showBigPlay(video));
+      if (attempt) attempt.catch((err) => {
+        // pause() interrupting a pending play() is normal flick-scrolling,
+        // not an autoplay block — no play button for that.
+        if (err && err.name === "AbortError") return;
+        showBigPlay(video);
+      });
     } else {
       video.pause();
     }
@@ -1022,8 +1125,14 @@ const sentinelObserver = new IntersectionObserver((entries) => {
 const $pill = document.getElementById("new-pill");
 $pill.addEventListener("click", async () => {
   $pill.classList.remove("show");
-  await prependFresh();
-  announce("Fresh kitties at the top!");
+  const added = await prependFresh();
+  if (added > 0) {
+    announce("Fresh kitties at the top!");
+  } else {
+    // Nothing arrived (busy, offline, or no new kitties) — keep the
+    // affordance so she can simply try again.
+    $pill.classList.add("show");
+  }
 });
 
 document.addEventListener("visibilitychange", () => {
@@ -1037,6 +1146,7 @@ window.addEventListener("pagehide", saveFeedNow);
 
 window.addEventListener("online", () => {
   removeStateCard();
+  retryQueuedMedia();
   flushOutbox();
   loadMore(8);
 });
