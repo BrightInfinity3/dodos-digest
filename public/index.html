@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dodo's Digest 🐦</title>
+<meta name="description" content="Fresh kitties every day, with love.">
+<meta name="theme-color" content="#FBF1E0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Dodo's">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23FBF1E0'/%3E%3Ctext y='72' x='50' text-anchor='middle' font-size='58'%3E🐦%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,600&display=swap" rel="stylesheet">
+<style>
+/* ---------- Design tokens: warm storybook newspaper ---------- */
+:root {
+  --paper: #FBF1E0;
+  --card: #FFFCF5;
+  --ink: #43301F;
+  --ink-soft: #6B543D;
+  --accent: #A34823;
+  --love: #2E6B3F;
+  --pass: #7C5F4B;
+  --peach: #FFD9B8;
+  --blush: #F2B8A0;
+  --dodo-body: #9AA7B4;
+  --dodo-belly: #F6E7CE;
+  --dodo-beak: #E8B04B;
+  --shadow: 0 4px 14px rgba(67, 48, 31, 0.10);
+  --radius: 1.5rem;
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans: 'Atkinson Hyperlegible', 'Segoe UI', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { font-size: 100%; } /* never override — this is the OS text-scaling hook */
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1.375rem;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+.wrap { max-width: 40rem; margin: 0 auto; padding: 0 1rem; }
+
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 0.5rem; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- Masthead ---------- */
+header { text-align: center; padding-top: 1.25rem; }
+.rule { border: none; border-top: 2px solid var(--accent); margin: 0.5rem 0; }
+.masthead-dodo { width: 5.75rem; height: 5.75rem; margin-bottom: -1.1rem; }
+h1.wordmark {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: clamp(2.75rem, 13vw, 4.5rem);
+  line-height: 1.05;
+  margin: 0.25rem 0 0.5rem;
+  letter-spacing: 0.01em;
+}
+.double-rule {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin: 0.25rem 0 0.75rem;
+}
+.double-rule::before, .double-rule::after {
+  content: ""; flex: 1;
+  border-top: 1.5px solid var(--accent);
+  box-shadow: 0 3px 0 -1.5px var(--accent);
+  height: 4px;
+}
+.fleuron { width: 1.5rem; height: 1.5rem; flex: none; }
+.edition {
+  font-family: var(--serif); font-style: italic; font-weight: 600;
+  font-size: 1.25rem; color: var(--accent); margin: 0.25rem 0;
+}
+.dateline { font-size: 1.125rem; color: var(--ink-soft); margin: 0.25rem 0; }
+.pexels-byline {
+  display: none;
+  padding: 0.6rem 1rem; margin: 0.1rem 0 0.25rem;
+}
+.pexels-byline.show { display: inline-block; }
+.pexels-byline a { color: var(--accent); font-size: 1.125rem; }
+
+/* ---------- Cards ---------- */
+main { padding-bottom: 3rem; }
+.card {
+  background: var(--card);
+  border: 2px solid var(--peach);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin: 0 0 2.5rem;
+  overflow: hidden;
+}
+.media-frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  background: var(--peach);
+}
+.media-frame.video-mat {
+  background: radial-gradient(ellipse at center, var(--peach) 0%, var(--paper) 100%);
+}
+.media-frame img, .media-frame video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; transition: opacity 0.4s ease;
+}
+.media-frame img { object-fit: cover; }
+.media-frame video { object-fit: contain; }
+.media-frame.loaded img, .media-frame.loaded video { opacity: 1; }
+.placeholder {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.placeholder svg { width: 45%; height: auto; opacity: 0.9; }
+.shimmer {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.shimmer::after {
+  content: ""; position: absolute; inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 252, 245, 0.55), transparent);
+  animation: shimmer-sweep 2.5s ease-in-out infinite;
+}
+@keyframes shimmer-sweep { to { transform: translateX(100%); } }
+.media-frame.loaded .placeholder, .media-frame.loaded .shimmer { display: none; }
+
+.chip {
+  position: absolute; top: 0.75rem; left: 0.75rem;
+  background: var(--card); border: 2px solid var(--peach);
+  border-radius: 2rem; padding: 0.3rem 0.9rem;
+  font-size: 1rem; font-weight: 700; color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.sound-btn {
+  position: absolute; bottom: 0.75rem; right: 0.75rem;
+  min-height: 3.25rem; padding: 0.4rem 1.1rem;
+  background: var(--card); border: 2px solid var(--peach);
+  border-radius: 2rem; font-family: var(--sans);
+  font-size: 1.125rem; font-weight: 700; color: var(--ink);
+  box-shadow: var(--shadow); cursor: pointer;
+  touch-action: manipulation;
+}
+.big-play {
+  position: absolute; inset: 0; margin: auto;
+  width: 5.5rem; height: 5.5rem; border-radius: 50%;
+  background: var(--card); border: 3px solid var(--accent);
+  color: var(--accent); font-size: 2.25rem;
+  box-shadow: var(--shadow); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  touch-action: manipulation;
+}
+
+.prompt {
+  font-weight: 700; text-align: center;
+  margin: 1.1rem 1rem 0.9rem;
+}
+.rate-row {
+  display: flex; gap: 1rem; padding: 0 1rem 1.1rem;
+}
+.rate-btn {
+  flex: 1; min-height: 4rem;
+  border: none; border-radius: 1.25rem;
+  font-family: var(--sans); font-size: 1.5rem; font-weight: 700;
+  color: #fff; cursor: pointer;
+  touch-action: manipulation; user-select: none;
+  padding: 0.5rem 0.25rem;
+}
+.rate-btn .thumb { font-size: 1.75rem; margin-right: 0.35rem; }
+.btn-love { background: var(--love); }
+.btn-pass { background: var(--pass); }
+.rate-btn.bounce { animation: squash 0.35s ease; }
+@keyframes squash {
+  0% { transform: scale(1); }
+  30% { transform: scale(0.92); }
+  70% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.rated-chip {
+  margin: 0 1rem 1.1rem;
+  background: var(--peach); border-radius: 1.25rem;
+  padding: 1rem; text-align: center; font-weight: 700;
+}
+.rated-chip .change-link {
+  display: inline-block; margin-left: 0.6rem;
+  font-size: 1.125rem; font-weight: 400;
+  color: var(--ink-soft); background: none; border: none;
+  text-decoration: underline; cursor: pointer;
+  font-family: var(--sans); padding: 0.3rem;
+  touch-action: manipulation;
+}
+
+.credit {
+  display: block; text-align: center;
+  padding: 0 1rem 1rem; font-size: 1.125rem; color: var(--ink-soft);
+}
+.credit a { color: var(--accent); display: inline-block; padding: 0.35rem 0.5rem; }
+
+/* Thumbed-down collapse */
+.card.dismissing { transition: max-height 0.6s ease-in-out; overflow: hidden; }
+.card.dismissing > * { transition: opacity 0.45s ease; opacity: 0; }
+.dismissed-strip {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.75rem; padding: 1rem; flex-wrap: wrap;
+}
+.dismissed-strip .msg { font-weight: 700; }
+.bring-back {
+  min-height: 3rem; padding: 0.5rem 1.1rem;
+  background: var(--card); color: var(--accent);
+  border: 2px solid var(--accent); border-radius: 1rem;
+  font-family: var(--sans); font-size: 1.125rem; font-weight: 700;
+  cursor: pointer; touch-action: manipulation;
+}
+
+/* ---------- State cards (loading / napping / oops) ---------- */
+.state-card {
+  background: var(--card); border: 2px solid var(--peach);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  margin: 0 0 2.5rem; padding: 2rem 1.25rem; text-align: center;
+}
+.state-card svg { width: 55%; max-width: 14rem; height: auto; }
+.state-card .msg {
+  font-family: var(--serif); font-weight: 600;
+  font-size: 1.625rem; line-height: 1.35; margin: 1rem 0;
+}
+.state-card .sub { font-size: 1.125rem; color: var(--ink-soft); margin: 0.5rem 0 0; }
+.state-btn {
+  min-height: 4rem; padding: 0.75rem 1.75rem;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 1.25rem;
+  font-family: var(--sans); font-size: 1.5rem; font-weight: 700;
+  cursor: pointer; touch-action: manipulation; margin-top: 0.5rem;
+}
+
+/* ---------- New kitties pill ---------- */
+.pill {
+  position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+  z-index: 50;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 2rem;
+  min-height: 3.5rem; padding: 0.75rem 1.5rem;
+  font-family: var(--sans); font-size: 1.25rem; font-weight: 700;
+  box-shadow: 0 6px 18px rgba(67, 48, 31, 0.28); cursor: pointer;
+  touch-action: manipulation;
+  display: none;
+}
+.pill.show { display: block; }
+
+/* ---------- Celebration ---------- */
+#celebrate {
+  position: fixed; inset: 0; pointer-events: none; z-index: 60;
+}
+.float-word {
+  position: fixed; z-index: 61; pointer-events: none;
+  font-family: var(--serif); font-style: italic; font-weight: 600;
+  font-size: 1.75rem; color: var(--accent);
+  animation: float-up 1.4s ease-out forwards;
+}
+@keyframes float-up {
+  from { opacity: 0; transform: translate(-50%, 0); }
+  20% { opacity: 1; }
+  to { opacity: 0; transform: translate(-50%, -4.5rem); }
+}
+
+/* ---------- Icon generator (dev) ---------- */
+.iconlab { padding: 1rem; text-align: center; }
+.iconlab a { display: inline-block; margin: 0.5rem; color: var(--accent); }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .shimmer::after { animation: none; }
+  .rate-btn.bounce { animation: none; }
+  .card.dismissing { transition: none; }
+  .card.dismissing > * { transition: none; }
+  .float-word { animation: float-up 1.4s steps(1) forwards; }
+  .media-frame img, .media-frame video { transition: none; }
+  .breathing { animation: none !important; }
+}
+.breathing { animation: breathe 2.4s ease-in-out infinite; transform-origin: 50% 90%; }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+</style>
+</head>
+<body>
+
+<!-- ---------- Hand-drawn friends (inline SVG symbols) ---------- -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- The dodo, reading its own digest -->
+    <symbol id="dodo-masthead" viewBox="0 0 200 200">
+      <g stroke="#43301F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M46 96 C 34 84 18 86 14 98 C 24 94 32 100 34 108 Z" fill="#F2B8A0"/>
+        <path d="M44 108 C 30 102 16 108 14 120 C 24 114 34 118 38 126 Z" fill="#F6E7CE"/>
+        <path d="M46 120 C 32 118 20 128 22 140 C 30 132 40 132 46 138 Z" fill="#F2B8A0"/>
+        <path d="M84 168 L 82 191 M 82 191 L 74 196 M 82 191 L 82 197 M 82 191 L 89 196" fill="none" stroke="#C98A2E" stroke-width="5"/>
+        <path d="M112 170 L 112 191 M 112 191 L 104 196 M 112 191 L 112 197 M 112 191 L 119 196" fill="none" stroke="#C98A2E" stroke-width="5"/>
+        <path d="M96 62 C 130 58 156 84 157 116 C 158 148 136 172 102 175 C 68 178 42 158 40 126 C 38 94 62 65 96 62 Z" fill="#9AA7B4"/>
+        <path d="M74 118 C 90 108 116 110 126 126 C 134 140 126 160 106 168 C 86 175 64 166 58 148 C 54 134 62 124 74 118 Z" fill="#F6E7CE" stroke-width="3"/>
+        <path d="M92 106 C 76 96 54 100 50 114 C 46 128 60 140 78 138 C 92 136 100 120 92 106 Z" fill="#9AA7B4"/>
+        <path d="M60 116 C 66 120 72 120 78 116 M 58 126 C 64 130 72 130 78 126" fill="none" stroke-width="2.5"/>
+        <g transform="rotate(-8 78 133)">
+          <rect x="56" y="118" width="44" height="30" rx="3" fill="#FFFCF5" stroke-width="3"/>
+          <text x="78" y="131" font-size="11" font-weight="bold" text-anchor="middle" stroke="none" fill="#43301F" font-family="Georgia,serif">DD</text>
+          <path d="M62 137 H 94 M 62 142 H 94" stroke-width="2" fill="none"/>
+        </g>
+        <path d="M134 18 C 156 16 174 32 175 52 C 176 72 160 86 138 87 C 116 88 100 74 100 54 C 100 34 114 20 134 18 Z" fill="#9AA7B4"/>
+        <path d="M120 34 C 136 26 156 32 162 46 C 167 58 158 72 140 75 C 122 78 108 68 108 52 C 108 44 112 38 120 34 Z" fill="#F6E7CE" stroke="none"/>
+        <path d="M162 36 C 180 26 198 35 199 49 C 200 63 190 75 176 76 C 168 77 160 70 159 60 C 158 50 158 41 162 36 Z" fill="#E8B04B"/>
+        <path d="M162 58 C 170 62 180 62 187 57" fill="none" stroke-width="3"/>
+        <path d="M180 42 C 182 43 183 45 182 47" fill="none" stroke-width="2.5"/>
+        <ellipse cx="138" cy="48" rx="13" ry="13.5" fill="#FFFFFF"/>
+        <circle cx="141" cy="52" r="6.5" fill="#43301F" stroke="none"/>
+        <circle cx="138" cy="47" r="2.5" fill="#FFFFFF" stroke="none"/>
+        <path d="M130 34 L 127 29 M 137 32 L 136 27" stroke-width="2.5"/>
+      </g>
+    </symbol>
+
+    <!-- Napping dodo: loading, offline, end of feed -->
+    <symbol id="dodo-napping" viewBox="0 0 200 200">
+      <g stroke="#43301F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M40 116 C 28 104 12 106 8 118 C 18 114 26 120 28 128 Z" fill="#F2B8A0"/>
+        <path d="M38 130 C 24 124 10 130 8 142 C 18 136 28 140 32 148 Z" fill="#F6E7CE"/>
+        <path d="M96 88 C 136 84 166 106 167 132 C 168 158 142 178 100 180 C 58 182 30 164 30 138 C 30 112 56 92 96 88 Z" fill="#9AA7B4"/>
+        <path d="M72 134 C 90 124 118 126 130 140 C 138 152 130 168 106 174 C 82 180 58 172 52 156 C 48 144 58 140 72 134 Z" fill="#F6E7CE" stroke-width="3"/>
+        <path d="M90 122 C 74 112 52 116 48 130 C 44 144 58 156 76 154 C 90 152 98 136 90 122 Z" fill="#9AA7B4"/>
+        <path d="M58 132 C 64 136 70 136 76 132 M 56 142 C 62 146 70 146 76 142" fill="none" stroke-width="2.5"/>
+        <path d="M132 52 C 154 50 172 66 173 84 C 174 102 158 116 136 117 C 114 118 98 104 98 86 C 98 68 112 54 132 52 Z" fill="#9AA7B4"/>
+        <path d="M118 68 C 134 60 154 66 160 80 C 165 92 156 104 138 107 C 120 110 106 100 106 86 C 106 78 110 72 118 68 Z" fill="#F6E7CE" stroke="none"/>
+        <g transform="translate(-6 34) rotate(18 162 56)">
+          <path d="M162 36 C 180 26 198 35 199 49 C 200 63 190 75 176 76 C 168 77 160 70 159 60 C 158 50 158 41 162 36 Z" fill="#E8B04B"/>
+          <path d="M162 58 C 170 62 180 62 187 57" fill="none" stroke-width="3"/>
+        </g>
+        <path d="M126 84 C 131 89 141 89 146 84" fill="none"/>
+        <path d="M124 70 L 121 65 M 133 68 L 132 63" stroke-width="2.5"/>
+      </g>
+      <g font-family="Georgia,serif" font-style="italic" fill="#6B543D">
+        <text x="150" y="46" font-size="15">z</text>
+        <text x="164" y="33" font-size="19">z</text>
+        <text x="177" y="21" font-size="23">Z</text>
+      </g>
+    </symbol>
+
+    <!-- Oops dodo: something went sideways -->
+    <symbol id="dodo-oops" viewBox="0 0 200 200">
+      <g stroke="#43301F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M46 96 C 34 84 18 86 14 98 C 24 94 32 100 34 108 Z" fill="#F2B8A0"/>
+        <path d="M44 108 C 30 102 16 108 14 120 C 24 114 34 118 38 126 Z" fill="#F6E7CE"/>
+        <path d="M46 120 C 32 118 20 128 22 140 C 30 132 40 132 46 138 Z" fill="#F2B8A0"/>
+        <path d="M84 168 L 82 191 M 82 191 L 74 196 M 82 191 L 82 197 M 82 191 L 89 196" fill="none" stroke="#C98A2E" stroke-width="5"/>
+        <path d="M112 170 L 112 191 M 112 191 L 104 196 M 112 191 L 112 197 M 112 191 L 119 196" fill="none" stroke="#C98A2E" stroke-width="5"/>
+        <path d="M96 62 C 130 58 156 84 157 116 C 158 148 136 172 102 175 C 68 178 42 158 40 126 C 38 94 62 65 96 62 Z" fill="#9AA7B4"/>
+        <path d="M74 118 C 90 108 116 110 126 126 C 134 140 126 160 106 168 C 86 175 64 166 58 148 C 54 134 62 124 74 118 Z" fill="#F6E7CE" stroke-width="3"/>
+        <path d="M134 18 C 156 16 174 32 175 52 C 176 72 160 86 138 87 C 116 88 100 74 100 54 C 100 34 114 20 134 18 Z" fill="#9AA7B4"/>
+        <path d="M120 34 C 136 26 156 32 162 46 C 167 58 158 72 140 75 C 122 78 108 68 108 52 C 108 44 112 38 120 34 Z" fill="#F6E7CE" stroke="none"/>
+        <path d="M92 106 C 76 96 54 100 50 114 C 46 128 60 140 78 138 C 92 136 100 120 92 106 Z" fill="#9AA7B4"/>
+        <path d="M60 116 C 66 120 72 120 78 116 M 58 126 C 64 130 72 130 78 126" fill="none" stroke-width="2.5"/>
+        <path d="M162 36 C 180 26 198 35 199 49 C 200 63 190 75 176 76 C 168 77 160 70 159 60 C 158 50 158 41 162 36 Z" fill="#E8B04B"/>
+        <path d="M161 60 C 168 66 178 66 186 59" fill="none" stroke-width="3"/>
+        <ellipse cx="138" cy="48" rx="14" ry="14.5" fill="#FFFFFF"/>
+        <circle cx="139" cy="49" r="7" fill="#43301F" stroke="none"/>
+        <circle cx="136" cy="45" r="2.5" fill="#FFFFFF" stroke="none"/>
+        <path d="M100 16 C 95 26 95 32 100 35 C 105 32 105 26 100 16 Z" fill="#9AA7B4" stroke-width="2.5"/>
+      </g>
+    </symbol>
+
+    <!-- Cat loaf: the loading placeholder friend -->
+    <symbol id="cat-loaf" viewBox="0 0 120 80">
+      <g stroke="#43301F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 66 C 10 50 16 32 34 25 L 39 12 L 50 21 C 57 19 65 19 72 21 L 83 12 L 88 25 C 105 32 112 50 104 66 Z" fill="#F6E7CE"/>
+        <path d="M104 62 C 114 58 117 48 111 41" fill="none"/>
+        <path d="M40 44 C 43 47 47 47 50 44 M 70 44 C 73 47 77 47 80 44" fill="none" stroke-width="2.5"/>
+        <path d="M54 54 C 56 57 59 57 60 54 M 60 54 C 61 57 64 57 66 54" fill="none" stroke-width="2.5"/>
+        <path d="M30 50 L 18 48 M 30 55 L 19 56 M 90 50 L 102 48 M 90 55 L 101 56" stroke-width="2"/>
+      </g>
+    </symbol>
+
+    <!-- Tiny flower for the masthead rule -->
+    <symbol id="fleuron" viewBox="0 0 24 24">
+      <g fill="#A34823">
+        <circle cx="12" cy="6" r="3.2"/><circle cx="18" cy="10.5" r="3.2"/>
+        <circle cx="15.8" cy="17.5" r="3.2"/><circle cx="8.2" cy="17.5" r="3.2"/>
+        <circle cx="6" cy="10.5" r="3.2"/>
+      </g>
+      <circle cx="12" cy="12" r="2.6" fill="#E8B04B"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header>
+    <hr class="rule">
+    <svg class="masthead-dodo breathing" aria-hidden="true"><use href="#dodo-masthead"/></svg>
+    <h1 class="wordmark">Dodo&rsquo;s Digest</h1>
+    <div class="double-rule" aria-hidden="true"><svg class="fleuron"><use href="#fleuron"/></svg></div>
+    <p class="edition">🐾 The Cat Edition 🐾</p>
+    <p class="dateline" id="dateline"></p>
+    <p class="pexels-byline" id="pexels-byline"><a href="https://www.pexels.com" target="_blank" rel="noopener">Photos provided by Pexels</a></p>
+    <hr class="rule">
+  </header>
+
+  <main id="feed" aria-label="Cat feed"></main>
+  <div id="sentinel" aria-hidden="true"></div>
+</div>
+
+<button class="pill" id="new-pill">🐾 New kitties!</button>
+<canvas id="celebrate" aria-hidden="true"></canvas>
+<div class="visually-hidden" aria-live="polite" id="announcer"></div>
+<noscript>
+  <p style="text-align:center; font-size:1.375rem; padding:2rem;">
+    The kitties need a little more magic to appear — please open this page in a normal phone or computer browser. ❤
+  </p>
+</noscript>
+
+<script>
+"use strict";
+/* ================= Helpers ================= */
+function el(tag, cls, text) {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+function loadLS(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw === null ? fallback : JSON.parse(raw);
+  } catch (e) { return fallback; }
+}
+function saveLS(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* full or private mode — fine */ }
+}
+function announce(text) {
+  const a = document.getElementById("announcer");
+  a.textContent = "";
+  requestAnimationFrame(() => { a.textContent = text; });
+}
+
+/* ================= State ================= */
+const FEED_KEY = "dd-feed", RATINGS_KEY = "dd-ratings", OUTBOX_KEY = "dd-outbox", UPCOUNT_KEY = "dd-upcount";
+const STALE_MS = 45 * 60 * 1000;
+const KEEP_ITEMS = 60;
+const $feed = document.getElementById("feed");
+const $sentinel = document.getElementById("sentinel");
+const state = {
+  items: new Map(),            // id -> item, insertion order = feed order
+  ratings: loadLS(RATINGS_KEY, {}),
+  outbox: loadLS(OUTBOX_KEY, []),
+  upCount: loadLS(UPCOUNT_KEY, 0),
+  sources: null,
+  lastFetch: 0,
+  loading: false,
+  coolUntil: 0,
+  reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+};
+
+/* ================= Masthead ================= */
+document.getElementById("dateline").textContent =
+  new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) +
+  " · Made with love for Dodo ❤";
+
+function updatePexelsByline() {
+  if (state.sources && state.sources.pexels) {
+    document.getElementById("pexels-byline").classList.add("show");
+  }
+}
+
+/* ================= Feed persistence (so she can always scroll back) ================= */
+let saveTimer = null;
+function saveFeedSoon() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveFeedNow, 400);
+}
+function saveFeedNow() {
+  const ordered = [...$feed.querySelectorAll(".card[data-id]")]
+    .map((c) => state.items.get(c.dataset.id))
+    .filter(Boolean)
+    .slice(-KEEP_ITEMS);
+  saveLS(FEED_KEY, {
+    items: ordered,
+    scrollY: window.scrollY,
+    savedAt: state.lastFetch || Date.now(),
+  });
+}
+
+function restoreFeed() {
+  const saved = loadLS(FEED_KEY, null);
+  if (!saved || !Array.isArray(saved.items) || saved.items.length === 0) return false;
+  if (Date.now() - (saved.savedAt || 0) > 7 * 24 * 60 * 60 * 1000) return false;
+  let rendered = 0;
+  for (const item of saved.items) {
+    if (!item || !item.id || state.items.has(item.id)) continue;
+    const local = state.ratings[item.id];
+    if (local && local.rating === "down") continue;
+    state.items.set(item.id, item);
+    $feed.appendChild(renderCard(item));
+    rendered++;
+  }
+  if (rendered === 0) return false;
+  state.lastFetch = saved.savedAt || 0;
+  requestAnimationFrame(() => {
+    window.scrollTo(0, saved.scrollY || 0);
+  });
+  return true;
+}
+
+/* ================= Fetching ================= */
+async function fetchBatch(count) {
+  const res = await fetch(`/api/feed?count=${count}`);
+  if (!res.ok) throw new Error("feed " + res.status);
+  return res.json();
+}
+
+function freshItemsFrom(data) {
+  state.sources = data.sources || state.sources;
+  updatePexelsByline();
+  return (data.items || []).filter((item) => {
+    if (!item || !item.id || state.items.has(item.id)) return false;
+    const local = state.ratings[item.id];
+    if (local && local.rating === "down") return false;
+    if (item.rating === "down") return false;
+    return true;
+  });
+}
+
+let firstLoadCards = [];
+function showFirstLoadShimmer() {
+  for (let i = 0; i < 2; i++) {
+    const card = el("article", "card");
+    const frame = el("div", "media-frame");
+    frame.appendChild(makePlaceholder());
+    card.appendChild(frame);
+    if (i === 0) {
+      card.appendChild(el("p", "prompt", "Fetching fresh kitties…"));
+    }
+    $feed.appendChild(card);
+    firstLoadCards.push(card);
+  }
+}
+function clearFirstLoadShimmer() {
+  firstLoadCards.forEach((c) => c.remove());
+  firstLoadCards = [];
+}
+
+let errorRetried = false;
+async function loadMore(count) {
+  if (state.loading || Date.now() < state.coolUntil) return;
+  state.loading = true;
+  removeStateCard();
+  const isFirst = state.items.size === 0;
+  if (isFirst) showFirstLoadShimmer();
+  try {
+    const data = await fetchBatch(count || 8);
+    const fresh = freshItemsFrom(data);
+    clearFirstLoadShimmer();
+    if (fresh.length === 0) {
+      state.coolUntil = Date.now() + ((data.retryAfter || 30) * 1000);
+      if ((data.items || []).length === 0 && !errorRetried) {
+        // Cold server pools — one quiet retry before showing the nap card.
+        errorRetried = true;
+        state.coolUntil = 0;
+        setTimeout(() => { state.loading = false; loadMore(count); }, 4000);
+        return;
+      }
+      showStateCard("napping", "That’s all the kitties for now! They’ll be back after their nap. ❤",
+        "Back to the top", () => {
+          window.scrollTo({ top: 0, behavior: state.reducedMotion ? "auto" : "smooth" });
+          removeStateCard();
+        }, "New kitties arrive every day.");
+    } else {
+      errorRetried = false;
+      for (const item of fresh) {
+        state.items.set(item.id, item);
+        $feed.appendChild(renderCard(item));
+      }
+      state.lastFetch = Date.now();
+      saveFeedSoon();
+    }
+  } catch (err) {
+    clearFirstLoadShimmer();
+    if (!errorRetried) {
+      errorRetried = true;
+      setTimeout(() => { state.loading = false; loadMore(count); }, 2000);
+      return;
+    }
+    if (!navigator.onLine) {
+      showStateCard("napping", "No internet right now. The kitties will be here when you’re back!");
+    } else {
+      showStateCard("oops", "The kitties are napping — try again in a moment!",
+        "🐾 Wake the kitties", () => {
+          errorRetried = false;
+          removeStateCard();
+          loadMore(count);
+        });
+    }
+  } finally {
+    state.loading = false;
+  }
+}
+
+async function prependFresh() {
+  if (state.loading) return;
+  state.loading = true;
+  try {
+    const data = await fetchBatch(8);
+    const fresh = freshItemsFrom(data);
+    const firstCard = $feed.querySelector(".card");
+    for (const item of fresh.reverse()) {
+      state.items.set(item.id, item);
+      const card = renderCard(item);
+      if (firstCard) $feed.insertBefore(card, $feed.firstChild);
+      else $feed.appendChild(card);
+    }
+    state.lastFetch = Date.now();
+    saveFeedSoon();
+  } catch (err) { /* pill stays available; sentinel path will surface problems */ }
+  state.loading = false;
+  window.scrollTo({ top: 0, behavior: state.reducedMotion ? "auto" : "smooth" });
+}
+
+/* ================= Card rendering ================= */
+function makePlaceholder() {
+  const wrap = el("div", "placeholder");
+  wrap.innerHTML = '<svg aria-hidden="true"><use href="#cat-loaf"/></svg>';
+  const shimmer = el("div", "shimmer");
+  wrap.appendChild(shimmer);
+  return wrap;
+}
+
+function creditText(item) {
+  if (!item.credit || !item.credit.name) return null;
+  const serviceNames = { thecatapi: "TheCatAPI", cataas: "Cataas" };
+  if (item.credit.name === serviceNames[item.source]) {
+    return { pre: "From ", name: item.credit.name, link: item.credit.link };
+  }
+  const kind = item.type === "video" ? "Video" : "Photo";
+  return { pre: kind + " by ", name: item.credit.name, link: item.credit.link, suffix: " · Pexels" };
+}
+
+function renderCard(item) {
+  const card = el("article", "card");
+  card.dataset.id = item.id;
+
+  const frame = el("div", "media-frame" + (item.type === "video" ? " video-mat" : ""));
+  frame.appendChild(makePlaceholder());
+
+  if (item.type === "video") {
+    const video = document.createElement("video");
+    video.muted = true;
+    video.playsInline = true;
+    video.setAttribute("playsinline", "");
+    video.loop = true;
+    video.preload = "metadata";
+    if (item.poster) video.poster = item.poster;
+    video.src = item.src;
+    video.setAttribute("aria-label", "Cat video" + (item.credit ? " by " + item.credit.name : ""));
+    video.addEventListener("loadeddata", () => frame.classList.add("loaded"));
+    if (item.poster) {
+      // A poster is enough to show the frame nicely before playback.
+      const posterImg = new Image();
+      posterImg.onload = () => frame.classList.add("loaded");
+      posterImg.src = item.poster;
+    }
+    video.addEventListener("error", () => removeBrokenCard(card, item));
+    frame.appendChild(video);
+
+    const chip = el("span", "chip", "🎬 Video");
+    frame.appendChild(chip);
+
+    const soundBtn = el("button", "sound-btn", "🔇 Sound");
+    soundBtn.setAttribute("aria-label", "Turn sound on");
+    soundBtn.addEventListener("click", () => {
+      video.muted = !video.muted;
+      if (!video.muted) {
+        document.querySelectorAll("video").forEach((v) => { if (v !== video) v.muted = true; });
+        document.querySelectorAll(".sound-btn").forEach((b) => {
+          if (b !== soundBtn) { b.textContent = "🔇 Sound"; b.setAttribute("aria-label", "Turn sound on"); }
+        });
+      }
+      soundBtn.textContent = video.muted ? "🔇 Sound" : "🔊 Sound on";
+      soundBtn.setAttribute("aria-label", video.muted ? "Turn sound on" : "Turn sound off");
+    });
+    frame.appendChild(soundBtn);
+    videoObserver.observe(video);
+  } else {
+    const img = new Image();
+    // First screenful loads eagerly (instant delight); the rest lazily.
+    img.loading = state.items.size <= 3 ? "eager" : "lazy";
+    img.decoding = "async";
+    img.alt = (item.type === "gif" ? "Cat GIF" : "Cat photo") + (item.credit ? " from " + item.credit.name : "");
+    img.addEventListener("load", () => frame.classList.add("loaded"));
+    img.addEventListener("error", () => removeBrokenCard(card, item));
+    img.src = item.src;
+    frame.appendChild(img);
+    if (item.type === "gif") {
+      frame.appendChild(el("span", "chip", "✨ Moving picture!"));
+    }
+  }
+  card.appendChild(frame);
+
+  const local = state.ratings[item.id];
+  const ratedUp = (local && local.rating === "up") || item.rating === "up";
+  if (ratedUp) {
+    card.appendChild(makeLovedChip(item, card));
+  } else {
+    card.appendChild(el("p", "prompt", "Do you like this kitty?"));
+    card.appendChild(makeRateRow(item, card));
+  }
+
+  const credit = creditText(item);
+  if (credit) {
+    const p = el("p", "credit");
+    p.append(credit.pre);
+    if (credit.link) {
+      const a = el("a", null, credit.name);
+      a.href = credit.link;
+      a.target = "_blank";
+      a.rel = "noopener";
+      p.appendChild(a);
+    } else {
+      p.append(credit.name);
+    }
+    if (credit.suffix) p.append(credit.suffix);
+    card.appendChild(p);
+  }
+
+  return card;
+}
+
+function removeBrokenCard(card, item) {
+  card.remove();
+  state.items.delete(item.id);
+  saveFeedSoon();
+}
+
+function makeRateRow(item, card) {
+  const row = el("div", "rate-row");
+  const loveBtn = el("button", "rate-btn btn-love");
+  loveBtn.innerHTML = '<span class="thumb" aria-hidden="true">👍</span>Love it!';
+  loveBtn.setAttribute("aria-pressed", "false");
+  const passBtn = el("button", "rate-btn btn-pass");
+  passBtn.innerHTML = '<span class="thumb" aria-hidden="true">👎</span>Not for me';
+  passBtn.setAttribute("aria-pressed", "false");
+  loveBtn.addEventListener("click", () => rateUp(item, card, loveBtn));
+  passBtn.addEventListener("click", () => rateDown(item, card, passBtn));
+  row.append(loveBtn, passBtn);
+  return row;
+}
+
+function makeLovedChip(item, card) {
+  const chip = el("div", "rated-chip");
+  chip.setAttribute("tabindex", "-1");
+  chip.append("❤ You loved this kitty!");
+  const change = el("button", "change-link", "change");
+  change.addEventListener("click", () => {
+    const prompt = el("p", "prompt", "Do you like this kitty?");
+    const row = makeRateRow(item, card);
+    chip.replaceWith(prompt);
+    prompt.after(row);
+  });
+  chip.appendChild(change);
+  return chip;
+}
+
+/* ================= Ratings ================= */
+function setLocalRating(item, rating) {
+  if (rating === "none") delete state.ratings[item.id];
+  else state.ratings[item.id] = { rating, ts: Date.now() };
+  saveLS(RATINGS_KEY, state.ratings);
+}
+
+function postRating(item, rating) {
+  const payload = {
+    itemId: item.id, itemType: item.type, src: item.src,
+    poster: item.poster || null, source: item.source,
+    credit: item.credit || null, rating,
+  };
+  fetch("/api/rating", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }).then((res) => { if (!res.ok) throw new Error("save failed"); })
+    .catch(() => {
+      state.outbox.push(payload);
+      saveLS(OUTBOX_KEY, state.outbox);
+    });
+}
+
+async function flushOutbox() {
+  if (state.outbox.length === 0) return;
+  const pending = state.outbox.slice();
+  const stillPending = [];
+  for (const payload of pending) {
+    try {
+      const res = await fetch("/api/rating", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) stillPending.push(payload);
+    } catch (e) { stillPending.push(payload); }
+  }
+  state.outbox = stillPending;
+  saveLS(OUTBOX_KEY, state.outbox);
+}
+
+const SWEET_WORDS = ["Purrfect!", "Lovely!", "So sweet!", "What a cutie!", "Aww!"];
+function rateUp(item, card, btn) {
+  setLocalRating(item, "up");
+  postRating(item, "up");
+  if (navigator.vibrate) navigator.vibrate(30);
+  state.upCount++;
+  saveLS(UPCOUNT_KEY, state.upCount);
+
+  const rect = btn.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+  const isFifth = state.upCount % 5 === 0;
+  if (!state.reducedMotion) {
+    btn.classList.add("bounce");
+    burst(x, y, isFifth ? 32 : 16);
+  } else {
+    burstStatic(x, y);
+  }
+  if (isFifth) floatWord(x, y, SWEET_WORDS[(state.upCount / 5 - 1) % SWEET_WORDS.length]);
+
+  const prompt = card.querySelector(".prompt");
+  const row = card.querySelector(".rate-row");
+  const chip = makeLovedChip(item, card);
+  if (prompt) prompt.remove();
+  if (row) row.replaceWith(chip);
+  chip.focus({ preventScroll: true });
+  announce("Saved — you loved this kitty!");
+  saveFeedSoon();
+}
+
+function rateDown(item, card, btn) {
+  setLocalRating(item, "down");
+  postRating(item, "down");
+  if (navigator.vibrate) navigator.vibrate(20);
+  announce("Okay — fewer like this.");
+
+  const showStrip = () => {
+    card.classList.remove("dismissing");
+    card.style.maxHeight = "";
+    card.innerHTML = "";
+    const strip = el("div", "dismissed-strip");
+    strip.appendChild(el("span", "msg", "Okay! Fewer like this. 🐾"));
+    const back = el("button", "bring-back", "Oops — bring it back");
+    back.addEventListener("click", () => {
+      setLocalRating(item, "none");
+      postRating(item, "none");
+      const restored = renderCard(item);
+      card.replaceWith(restored);
+      announce("It’s back!");
+      saveFeedSoon();
+    });
+    strip.appendChild(back);
+    card.appendChild(strip);
+    saveFeedSoon();
+  };
+
+  if (state.reducedMotion) {
+    showStrip();
+  } else {
+    card.style.maxHeight = card.offsetHeight + "px";
+    requestAnimationFrame(() => {
+      card.classList.add("dismissing");
+      card.style.maxHeight = "6.5rem";
+      setTimeout(showStrip, 620);
+    });
+  }
+}
+
+/* ================= Celebration particles ================= */
+const canvas = document.getElementById("celebrate");
+const ctx = canvas.getContext("2d");
+const HEART_COLORS = ["#D96C4F", "#F2B8A0", "#E8B04B", "#C65D3B"];
+let particles = [];
+let rafRunning = false;
+
+function sizeCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener("resize", sizeCanvas);
+
+function burst(x, y, count) {
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x, y,
+      vx: (Math.random() - 0.5) * 5,
+      vy: -(4 + Math.random() * 3.5),
+      rot: Math.random() * Math.PI * 2,
+      vr: (Math.random() - 0.5) * 0.2,
+      size: 12 + Math.random() * 16,
+      life: 1,
+      decay: 0.012 + Math.random() * 0.008,
+      phase: Math.random() * Math.PI * 2,
+      kind: i % 6 === 5 ? "paw" : "heart",
+      color: HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)],
+    });
+  }
+  if (!rafRunning) { rafRunning = true; requestAnimationFrame(tick); }
+}
+
+function burstStatic(x, y) {
+  // Reduced motion: one gentle heart pop, opacity only.
+  particles.push({ x, y: y - 40, vx: 0, vy: 0, rot: 0, vr: 0, size: 26, life: 1, decay: 0.02, phase: 0, kind: "heart", color: HEART_COLORS[0], still: true });
+  if (!rafRunning) { rafRunning = true; requestAnimationFrame(tick); }
+}
+
+function drawHeart(size) {
+  ctx.beginPath();
+  ctx.moveTo(0, size * 0.35);
+  ctx.bezierCurveTo(-size * 0.55, -size * 0.1, -size * 0.3, -size * 0.55, 0, -size * 0.2);
+  ctx.bezierCurveTo(size * 0.3, -size * 0.55, size * 0.55, -size * 0.1, 0, size * 0.35);
+  ctx.fill();
+}
+
+function drawPaw(size) {
+  ctx.beginPath();
+  ctx.ellipse(0, size * 0.15, size * 0.3, size * 0.24, 0, 0, Math.PI * 2);
+  ctx.fill();
+  for (const dx of [-0.28, 0, 0.28]) {
+    ctx.beginPath();
+    ctx.arc(dx * size, -size * 0.22 + Math.abs(dx) * size * 0.3, size * 0.12, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function tick() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (const p of particles) {
+    if (!p.still) {
+      p.x += p.vx + Math.sin(p.phase) * 0.6;
+      p.y += p.vy;
+      p.vy += 0.16;
+      p.rot += p.vr;
+      p.phase += 0.15;
+    }
+    p.life -= p.decay;
+    if (p.life <= 0) continue;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 1.4));
+    ctx.fillStyle = p.color;
+    if (p.kind === "paw") drawPaw(p.size); else drawHeart(p.size);
+    ctx.restore();
+  }
+  particles = particles.filter((p) => p.life > 0);
+  if (particles.length > 0) requestAnimationFrame(tick);
+  else { rafRunning = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+}
+
+function floatWord(x, y, word) {
+  const span = el("span", "float-word", word);
+  span.style.left = x + "px";
+  span.style.top = (y - 60) + "px";
+  document.body.appendChild(span);
+  setTimeout(() => span.remove(), 1500);
+}
+
+/* ================= Video autoplay (Facebook-style) ================= */
+const videoObserver = new IntersectionObserver((entries) => {
+  for (const entry of entries) {
+    const video = entry.target;
+    if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+      const attempt = video.play();
+      if (attempt) attempt.catch(() => showBigPlay(video));
+    } else {
+      video.pause();
+    }
+  }
+}, { threshold: [0, 0.6] });
+
+function showBigPlay(video) {
+  const frame = video.closest(".media-frame");
+  if (!frame || frame.querySelector(".big-play")) return;
+  const btn = el("button", "big-play", "▶");
+  btn.setAttribute("aria-label", "Play video");
+  btn.addEventListener("click", () => {
+    video.play().catch(() => {});
+    btn.remove();
+  });
+  frame.appendChild(btn);
+}
+
+/* ================= State cards ================= */
+function removeStateCard() {
+  const existing = document.getElementById("state-card");
+  if (existing) existing.remove();
+}
+function showStateCard(pose, message, btnLabel, onClick, subText) {
+  removeStateCard();
+  const card = el("div", "state-card");
+  card.id = "state-card";
+  card.innerHTML = `<svg aria-hidden="true" viewBox="0 0 200 200"><use href="#dodo-${pose}"/></svg>`;
+  card.appendChild(el("p", "msg", message));
+  if (btnLabel) {
+    const btn = el("button", "state-btn", btnLabel);
+    btn.addEventListener("click", onClick);
+    card.appendChild(btn);
+  }
+  if (subText) card.appendChild(el("p", "sub", subText));
+  $feed.appendChild(card);
+}
+
+/* ================= Infinite scroll ================= */
+const sentinelObserver = new IntersectionObserver((entries) => {
+  if (entries.some((e) => e.isIntersecting)) loadMore(8);
+}, { rootMargin: "250%" });
+
+/* ================= New-kitties pill & lifecycle ================= */
+const $pill = document.getElementById("new-pill");
+$pill.addEventListener("click", async () => {
+  $pill.classList.remove("show");
+  await prependFresh();
+  announce("Fresh kitties at the top!");
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    saveFeedNow();
+  } else if (state.lastFetch && Date.now() - state.lastFetch > STALE_MS && state.items.size > 0) {
+    $pill.classList.add("show");
+  }
+});
+window.addEventListener("pagehide", saveFeedNow);
+
+window.addEventListener("online", () => {
+  removeStateCard();
+  flushOutbox();
+  loadMore(8);
+});
+
+/* ================= Icon generator (dev helper, ?makeicons) ================= */
+async function makeIcons() {
+  const symbol = document.getElementById("dodo-masthead");
+  const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">${symbol.innerHTML}</svg>`;
+  const img = new Image();
+  const lab = el("div", "iconlab");
+  document.body.prepend(lab);
+  await new Promise((resolve, reject) => {
+    img.onload = resolve;
+    img.onerror = reject;
+    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgStr);
+  });
+  const jobs = [
+    { name: "icon-192.png", px: 192, pad: 0.08 },
+    { name: "icon-512.png", px: 512, pad: 0.08 },
+    { name: "icon-maskable-512.png", px: 512, pad: 0.2 },
+    { name: "apple-touch-icon.png", px: 180, pad: 0.1 },
+  ];
+  for (const job of jobs) {
+    const c = document.createElement("canvas");
+    c.width = c.height = job.px;
+    const cx = c.getContext("2d");
+    cx.fillStyle = "#FBF1E0";
+    cx.fillRect(0, 0, job.px, job.px);
+    const inner = job.px * (1 - job.pad * 2);
+    cx.drawImage(img, job.px * job.pad, job.px * job.pad, inner, inner);
+    const dataUrl = c.toDataURL("image/png");
+    const a = el("a", null, "⬇ " + job.name);
+    a.href = dataUrl;
+    a.download = job.name;
+    lab.appendChild(a);
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+      try {
+        await fetch("/dev/icon", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: job.name, dataUrl }),
+        });
+        a.textContent += " ✓ saved";
+      } catch (e) { /* download links still work */ }
+    }
+  }
+}
+
+/* ================= Boot ================= */
+sizeCanvas();
+const hadHistory = restoreFeed();
+if (!hadHistory) {
+  loadMore(8);
+} else if (Date.now() - state.lastFetch > STALE_MS) {
+  $pill.classList.add("show");
+}
+sentinelObserver.observe($sentinel);
+flushOutbox();
+if (new URLSearchParams(location.search).has("makeicons")) makeIcons();
+</script>
+</body>
+</html>

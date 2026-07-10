@@ -18,7 +18,6 @@ process.on("unhandledRejection", (err) => {
 });
 
 const app = express();
-app.use(express.json());
 
 // Private family site — keep the whole thing out of search engines.
 app.use((req, res, next) => {
@@ -40,7 +39,7 @@ app.get("/api/feed", (req, res) => {
 
 // Upsert a rating with a full item snapshot so the grownups page can render
 // thumbnails without ever re-resolving upstream APIs. rating "none" removes it.
-app.post("/api/rating", (req, res) => {
+app.post("/api/rating", express.json(), (req, res) => {
   const b = req.body || {};
   const validRatings = ["up", "down", "none"];
   if (typeof b.itemId !== "string" || !b.itemId || b.itemId.length > 200 ||
@@ -91,6 +90,30 @@ app.delete("/api/rating/:itemId", adminGate, (req, res) => {
 app.get("/grownups", adminGate, (req, res) => {
   res.sendFile(path.join(__dirname, "admin", "grownups.html"));
 });
+
+// Dev-only helper (Railway builds run with NODE_ENV=production): lets the page
+// save its self-generated PWA icons into public/, and visual snapshots for review.
+if (process.env.NODE_ENV !== "production") {
+  const fs = require("fs");
+  const ICON_NAMES = new Set(["icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png"]);
+  app.post("/dev/icon", express.json({ limit: "12mb" }), (req, res) => {
+    const { name, dataUrl } = req.body || {};
+    if (typeof name !== "string" || typeof dataUrl !== "string" ||
+        !dataUrl.startsWith("data:image/png;base64,")) {
+      return res.status(400).json({ error: "bad input" });
+    }
+    const buf = Buffer.from(dataUrl.split(",")[1], "base64");
+    if (ICON_NAMES.has(name)) {
+      fs.writeFileSync(path.join(__dirname, "public", name), buf);
+    } else {
+      const safe = name.replace(/[^a-z0-9._-]/gi, "_");
+      const dir = path.join(__dirname, "data", "dev-snaps");
+      fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(path.join(dir, safe), buf);
+    }
+    res.json({ success: true });
+  });
+}
 
 app.use(express.static(path.join(__dirname, "public")));
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
