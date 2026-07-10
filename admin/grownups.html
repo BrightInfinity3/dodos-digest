@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dodo's Digest — Grownups</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+:root {
+  --paper: #FBF1E0; --card: #FFFCF5; --ink: #43301F; --ink-soft: #6B543D;
+  --accent: #A34823; --love: #2E6B3F; --pass: #7C5F4B; --peach: #FFD9B8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: 'Segoe UI', system-ui, sans-serif; font-size: 1rem; line-height: 1.5;
+}
+.wrap { max-width: 60rem; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+h1 { font-family: Georgia, serif; margin: 0 0 0.25rem; }
+.sub { color: var(--ink-soft); margin: 0 0 1.5rem; }
+h2 { font-family: Georgia, serif; border-bottom: 2px solid var(--peach); padding-bottom: 0.4rem; }
+.grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1rem; margin-bottom: 2.5rem;
+}
+.item {
+  background: var(--card); border: 2px solid var(--peach); border-radius: 0.9rem;
+  overflow: hidden; box-shadow: 0 3px 10px rgba(67,48,31,0.08);
+}
+.item .thumb {
+  aspect-ratio: 1; background: var(--peach); position: relative;
+}
+.item .thumb img, .item .thumb video {
+  width: 100%; height: 100%; object-fit: cover; display: block; position: absolute; inset: 0;
+}
+.item .meta { padding: 0.5rem 0.7rem; font-size: 0.85rem; color: var(--ink-soft); }
+.item .meta .kind { font-weight: 700; color: var(--ink); }
+.item button {
+  display: block; width: calc(100% - 1.4rem); margin: 0 0.7rem 0.7rem;
+  padding: 0.45rem; border: 1.5px solid var(--accent); border-radius: 0.6rem;
+  background: var(--card); color: var(--accent); font-weight: 700; cursor: pointer;
+}
+.empty { color: var(--ink-soft); font-style: italic; }
+.error { color: var(--accent); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🐦 Grownups' corner</h1>
+  <p class="sub">What Dodo has been loving (and not). Undo removes a rating so the item can appear in her feed again.</p>
+  <h2>❤ Loved <span id="up-count"></span></h2>
+  <div class="grid" id="up-grid"></div>
+  <h2>🚫 Not for Dodo <span id="down-count"></span></h2>
+  <div class="grid" id="down-grid"></div>
+</div>
+<script>
+"use strict";
+const token = new URLSearchParams(location.search).get("token");
+const qs = token ? "?token=" + encodeURIComponent(token) : "";
+
+function fmtDate(ts) {
+  return new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+function renderItem(entry) {
+  const div = document.createElement("div");
+  div.className = "item";
+  const thumb = document.createElement("div");
+  thumb.className = "thumb";
+  if (entry.itemType === "video") {
+    if (entry.poster) {
+      const img = new Image();
+      img.src = entry.poster;
+      img.alt = "video poster";
+      thumb.appendChild(img);
+    } else {
+      const v = document.createElement("video");
+      v.src = entry.src; v.muted = true; v.preload = "metadata";
+      thumb.appendChild(v);
+    }
+  } else {
+    const img = new Image();
+    img.loading = "lazy";
+    img.src = entry.src;
+    img.alt = entry.itemType;
+    thumb.appendChild(img);
+  }
+  div.appendChild(thumb);
+
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  meta.innerHTML = '<span class="kind"></span> · <span class="src"></span><br><span class="when"></span>';
+  meta.querySelector(".kind").textContent = entry.itemType;
+  meta.querySelector(".src").textContent = entry.source;
+  meta.querySelector(".when").textContent = fmtDate(entry.updatedAt);
+  div.appendChild(meta);
+
+  const undo = document.createElement("button");
+  undo.textContent = "Undo rating";
+  undo.addEventListener("click", async () => {
+    undo.disabled = true;
+    try {
+      await fetch("/api/rating/" + encodeURIComponent(entry.itemId) + qs, { method: "DELETE" });
+      load();
+    } catch (e) { undo.disabled = false; }
+  });
+  div.appendChild(undo);
+  return div;
+}
+
+async function load() {
+  try {
+    const res = await fetch("/api/ratings" + qs);
+    if (!res.ok) throw new Error(res.status);
+    const data = await res.json();
+    for (const [key, list] of [["up", data.up], ["down", data.down]]) {
+      const grid = document.getElementById(key + "-grid");
+      grid.innerHTML = "";
+      document.getElementById(key + "-count").textContent = "(" + list.length + ")";
+      if (list.length === 0) {
+        const p = document.createElement("p");
+        p.className = "empty";
+        p.textContent = "Nothing here yet.";
+        grid.appendChild(p);
+      } else {
+        list.forEach((entry) => grid.appendChild(renderItem(entry)));
+      }
+    }
+  } catch (err) {
+    document.getElementById("up-grid").innerHTML = '<p class="error">Could not load ratings (' + err.message + ')</p>';
+  }
+}
+load();
+</script>
+</body>
+</html>
