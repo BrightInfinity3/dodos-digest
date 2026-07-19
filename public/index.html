@@ -54,7 +54,7 @@ h1.wordmark {
 }
 
 .edition {
-  display: flex; align-items: center; gap: 1.1rem;
+  display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap;
   background: var(--card); border: 2px solid var(--peach); border-radius: 1.5rem;
   box-shadow: var(--shadow); padding: 1.25rem; margin: 0 0 1.5rem;
   text-decoration: none; color: inherit;
@@ -70,7 +70,9 @@ h1.wordmark {
 .edition.cats .icon { background: #FFF0D4; }
 .edition.octopus .icon { background: #EAE4F1; }
 .edition.soon .icon { background: #F3E4DF; }
-.edition .body { flex: 1; min-width: 0; }
+/* flex-basis keeps the text on the icon's row normally, but lets it wrap to a
+   full row below the icon when the OS font size is cranked up (no clipping). */
+.edition .body { flex: 1 1 13rem; min-width: 0; }
 .edition .title { font-family: var(--serif); font-weight: 900; font-size: 1.7rem; margin: 0 0 0.15rem; }
 .edition .blurb { font-size: 1.125rem; color: var(--ink-soft); margin: 0; }
 .edition .go { font-weight: 700; color: var(--accent); margin-top: 0.4rem; font-size: 1.125rem; }

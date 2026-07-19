@@ -97,7 +97,7 @@ p.body { margin: 0.75rem 0; }
 .caption .rel { display: inline-block; font-size: 1rem; font-weight: 700; color: var(--octo); background: var(--octo-soft); border-radius: 0.8rem; padding: 0.2rem 0.6rem; margin-bottom: 0.5rem; }
 .caption .rel.exact { color: #fff; background: var(--octo); }
 .caption .note { margin: 0.4rem 0 0.6rem; font-size: 1.15rem; }
-.caption .credit { font-size: 1.05rem; color: var(--ink-soft); margin: 0.5rem 0 0; }
+.caption .credit { font-size: 1.05rem; color: var(--ink-soft); margin: 0.5rem 0 0; overflow-wrap: anywhere; }
 .caption .credit a { color: var(--deep); }
 .love-btn {
   margin-top: 0.9rem; min-height: 3.25rem; width: 100%;
@@ -276,7 +276,9 @@ footer .heart { color: var(--accent); }
 <script>
 "use strict";
 const RATINGS_KEY = "dd-ratings", OUTBOX_KEY = "dd-outbox";
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+let reducedMotion = motionQuery.matches;
+if (motionQuery.addEventListener) motionQuery.addEventListener("change", (e) => { reducedMotion = e.matches; });
 
 function el(t, c, x) { const n = document.createElement(t); if (c) n.className = c; if (x !== undefined) n.textContent = x; return n; }
 function loadLS(k, f) { try { const r = localStorage.getItem(k); return r === null ? f : JSON.parse(r); } catch (e) { return f; } }
@@ -312,6 +314,7 @@ async function flushOutbox() {
 
 /* ---- Gallery ---- */
 const $gallery = document.getElementById("gallery");
+const brokenImgs = [];
 
 function relTag(item) {
   if (item.isExactSpecies) return { text: "the pearl octopus itself", cls: "rel exact" };
@@ -333,7 +336,12 @@ function makeCard(item, eager) {
   img.decoding = "async";
   img.alt = item.species + (item.isExactSpecies ? "" : " (a deep-sea relative of the pearl octopus)");
   img.addEventListener("load", () => frame.classList.add("loaded"));
-  img.addEventListener("error", () => card.remove());
+  img.addEventListener("error", () => {
+    // A load error while offline isn't a dead link — keep the card and retry
+    // when we're back online, so the gallery doesn't hollow out in a dead spot.
+    if (navigator.onLine) card.remove();
+    else brokenImgs.push({ img, src: item.src });
+  });
   img.src = item.src;
   frame.appendChild(img);
   frame.appendChild(el("span", "badge-real", "✓ Real photo"));
@@ -375,18 +383,18 @@ function makeCard(item, eager) {
   return card;
 }
 
+function showResting() {
+  $gallery.innerHTML = "";
+  const s = el("div", "state");
+  s.innerHTML = '<svg aria-hidden="true" viewBox="0 0 120 120"><use href="#octo-sleep"/></svg>';
+  s.appendChild(el("p", null, "The deep-sea photos are swimming over — one moment! 💜"));
+  $gallery.appendChild(s);
+}
+
 function renderGallery(items) {
   $gallery.innerHTML = "";
   const photos = items.filter((it) => it.kind === "specimen" || it.kind === "photo");
   const drawings = items.filter((it) => it.kind === "drawing");
-
-  if (photos.length === 0) {
-    const s = el("div", "state");
-    s.innerHTML = '<svg aria-hidden="true" viewBox="0 0 120 120"><use href="#octo-sleep"/></svg>';
-    s.appendChild(el("p", null, "The deep-sea photos are resting right now — please peek back in a little while. 💜"));
-    $gallery.appendChild(s);
-    return;
-  }
   photos.forEach((item, i) => $gallery.appendChild(makeCard(item, i < 2)));
 
   if (drawings.length) {
@@ -409,18 +417,31 @@ function renderGallery(items) {
   }
 }
 
+// The server returns {items:[]} (HTTP 200) for a second or two after every
+// restart while its cache warms up — so an empty result is "try again soon,"
+// never a permanent dead-end. Keep gently retrying until the photos arrive.
+let galleryLoaded = false;
+let galleryAttempts = 0;
 async function loadGallery() {
+  if (galleryLoaded) return;
   try {
     const res = await fetch("/api/octopus");
     if (!res.ok) throw new Error("http " + res.status);
     const data = await res.json();
-    renderGallery(data.items || []);
+    const photos = (data.items || []).filter((it) => it.kind === "specimen" || it.kind === "photo");
+    if (photos.length === 0) throw new Error("empty");
+    galleryLoaded = true;
+    renderGallery(data.items);
   } catch (err) {
-    $gallery.innerHTML = "";
-    const s = el("div", "state");
-    s.innerHTML = '<svg aria-hidden="true" viewBox="0 0 120 120"><use href="#octo-sleep"/></svg>';
-    s.appendChild(el("p", null, "The deep-sea photos are resting right now — please peek back in a little while. 💜"));
-    $gallery.appendChild(s);
+    showResting();
+    galleryAttempts++;
+    if (galleryAttempts < 8) setTimeout(loadGallery, 5000);
+  }
+}
+function retryBrokenImages() {
+  while (brokenImgs.length) {
+    const { img, src } = brokenImgs.pop();
+    if (img && img.isConnected) { img.src = ""; img.src = src; }
   }
 }
 
@@ -487,7 +508,11 @@ function tick() {
 /* ---- Boot ---- */
 loadGallery();
 flushOutbox();
-window.addEventListener("online", flushOutbox);
+window.addEventListener("online", () => {
+  if (!galleryLoaded) loadGallery();
+  retryBrokenImages();
+  flushOutbox();
+});
 </script>
 </body>
 </html>
