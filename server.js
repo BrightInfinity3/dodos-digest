@@ -7,6 +7,7 @@ const pool = require("./lib/pool");
 const ratings = require("./lib/ratings");
 const feed = require("./lib/feed");
 const octopus = require("./lib/octopus");
+const saints = require("./lib/saints");
 
 const PORT = process.env.PORT || 3003;
 
@@ -47,6 +48,24 @@ app.get("/api/octopus", async (req, res) => {
     console.error("[dodos-digest] octopus gallery failed:", err);
     res.json({ items: [] });
   }
+});
+
+// The Saints Edition: authored histories + real public-domain art.
+app.get("/api/saints", (req, res) => res.json({ saints: saints.list() }));
+app.get("/api/saints/:slug/art", async (req, res) => {
+  try {
+    const items = await saints.getArt(req.params.slug);
+    if (items === null) return res.status(404).json({ error: "unknown saint" });
+    res.json({ items });
+  } catch (err) {
+    console.error("[dodos-digest] saint art failed:", err);
+    res.json({ items: [] });
+  }
+});
+app.get("/api/saints/:slug", (req, res) => {
+  const saint = saints.get(req.params.slug);
+  if (!saint) return res.status(404).json({ error: "unknown saint" });
+  res.json(saint);
 });
 
 // Only store media URLs that point at the content hosts we actually serve
@@ -154,6 +173,9 @@ if (process.env.NODE_ENV !== "production") {
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
 app.get("/cats", (req, res) => res.sendFile(path.join(__dirname, "public", "cats", "index.html")));
 app.get("/octopus", (req, res) => res.sendFile(path.join(__dirname, "public", "octopus", "index.html")));
+app.get("/saints", (req, res) => res.sendFile(path.join(__dirname, "public", "saints", "index.html")));
+// Each saint's own page — the template reads the slug from the path.
+app.get("/saints/:slug", (req, res) => res.sendFile(path.join(__dirname, "public", "saints", "saint.html")));
 app.use(express.static(path.join(__dirname, "public")));
 
 ratings.init();

@@ -69,6 +69,7 @@ h1.wordmark {
 .edition .icon svg { width: 78%; height: 78%; }
 .edition.cats .icon { background: #FFF0D4; }
 .edition.octopus .icon { background: #EAE4F1; }
+.edition.saints .icon { background: #F4E7C6; }
 .edition.soon .icon { background: #F3E4DF; }
 /* flex-basis keeps the text on the icon's row normally, but lets it wrap to a
    full row below the icon when the OS font size is cranked up (no clipping). */
@@ -143,6 +144,21 @@ footer .heart { color: var(--accent); }
       <circle cx="66" cy="34" r="3" fill="#EDE6F5" stroke="none"/>
     </g>
   </symbol>
+  <!-- Haloed saint figure -->
+  <symbol id="glyph-saint" viewBox="0 0 120 120">
+    <g stroke="#B0842B" stroke-width="2.4" stroke-linecap="round">
+      <path d="M60 8 V1 M42 12 L38 5 M78 12 L82 5 M30 24 L23 19 M90 24 L97 19 M25 40 L17 39 M95 40 L103 39"/>
+    </g>
+    <circle cx="60" cy="40" r="24" fill="none" stroke="#B0842B" stroke-width="3.2"/>
+    <g stroke="#43301F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M32 116 C 30 88 42 66 60 66 C 78 66 90 88 88 116 Z" fill="#6E8CA8"/>
+      <path d="M60 66 C 54 78 54 100 56 116 M60 66 C 66 78 66 100 64 116" fill="none" stroke-width="2.4"/>
+      <path d="M46 92 C 52 86 68 86 74 92 C 70 104 66 108 60 108 C 54 108 50 104 46 92 Z" fill="#F6E7CE"/>
+      <circle cx="60" cy="40" r="16" fill="#F6E7CE"/>
+      <path d="M52 39 C 55 42 59 42 61 39 M59 39 C 61 42 65 42 68 39" fill="none" stroke-width="2.4"/>
+      <path d="M55 48 C 57 50 63 50 65 48" fill="none" stroke-width="2.2"/>
+    </g>
+  </symbol>
   <!-- Ladybug glyph (for the coming-soon card) -->
   <symbol id="glyph-bug" viewBox="0 0 120 120">
     <g stroke="#43301F" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
@@ -184,6 +200,15 @@ footer .heart { color: var(--accent); }
       <span class="body">
         <span class="title">The Octopus Edition</span>
         <p class="blurb">Meet the pearl octopus of the deep sea &mdash; real photos and the true story.</p>
+        <span class="go">Open &rarr;</span>
+      </span>
+    </a>
+
+    <a class="edition saints" href="/saints">
+      <span class="icon" aria-hidden="true"><svg viewBox="0 0 120 120"><use href="#glyph-saint"/></svg></span>
+      <span class="body">
+        <span class="title">The Saints Edition</span>
+        <p class="blurb">Twelve beloved saints &mdash; their stories and the beautiful art painted for them.</p>
         <span class="go">Open &rarr;</span>
       </span>
     </a>

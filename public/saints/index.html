@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Saints Edition · Dodo's Digest ✨</title>
+<meta name="description" content="Twelve beloved saints — their stories and their art.">
+<meta name="theme-color" content="#FBF1E0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Dodo's">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23FBF1E0'/%3E%3Ctext y='72' x='50' text-anchor='middle' font-size='58'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #FBF1E0; --card: #FFFCF5; --ink: #43301F; --ink-soft: #6B543D;
+  --accent: #A34823; --peach: #FFD9B8;
+  --gold: #B0842B; --gold-deep: #8A6520; --gold-soft: #F4E7C6; --robe: #6E8CA8;
+  --shadow: 0 4px 14px rgba(67, 48, 31, 0.10);
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans: 'Atkinson Hyperlegible', 'Segoe UI', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 1.375rem; line-height: 1.5; overflow-x: hidden; }
+.wrap { max-width: 44rem; margin: 0 auto; padding: 0 1rem 3rem; }
+:focus-visible { outline: 3px solid var(--gold-deep); outline-offset: 2px; border-radius: 0.5rem; }
+
+header { text-align: center; padding-top: 0.5rem; }
+.rule { border: none; border-top: 2px solid var(--gold); margin: 0.5rem 0; }
+.backlink { display: inline-flex; align-items: center; min-height: 2.75rem; gap: 0.35rem; padding: 0.5rem 0.9rem; margin-bottom: 0.25rem; color: var(--accent); font-weight: 700; font-size: 1.125rem; text-decoration: none; touch-action: manipulation; }
+.masthead-saint { width: 7rem; height: 7rem; margin-bottom: -0.5rem; }
+.edition-line { font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 1.25rem; color: var(--gold-deep); margin: 0.25rem 0; }
+h1.title { font-family: var(--serif); font-weight: 900; font-size: clamp(2.25rem, 10vw, 3.4rem); line-height: 1.08; margin: 0.25rem 0 0.4rem; }
+.sub { font-size: 1.2rem; color: var(--ink-soft); margin: 0.25rem 0 0.75rem; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr)); gap: 1.1rem; margin-top: 1.25rem; }
+.saint-card {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  background: var(--card); border: 2px solid var(--gold-soft); border-radius: 1.25rem;
+  box-shadow: var(--shadow); padding: 1.25rem 0.9rem 1.1rem; text-decoration: none; color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.saint-card:active { transform: scale(0.98); }
+.saint-card:hover { box-shadow: 0 8px 22px rgba(67,48,31,0.16); }
+.halo {
+  width: 5rem; height: 5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem; margin-bottom: 0.6rem;
+  background: radial-gradient(circle, var(--gold-soft) 0%, var(--gold-soft) 55%, rgba(176,132,43,0.25) 72%, transparent 78%);
+  box-shadow: 0 0 0 3px rgba(176,132,43,0.35);
+}
+.saint-card .name { font-family: var(--serif); font-weight: 900; font-size: 1.35rem; line-height: 1.15; margin: 0 0 0.25rem; }
+.saint-card .feast { font-family: var(--serif); font-style: italic; color: var(--gold-deep); font-size: 1.05rem; margin: 0 0 0.4rem; }
+.saint-card .patron { font-size: 1.02rem; color: var(--ink-soft); margin: 0; }
+.saint-card .read { margin-top: 0.7rem; font-weight: 700; color: var(--accent); font-size: 1.05rem; }
+
+.state { text-align: center; padding: 2rem 1rem; font-family: var(--serif); font-size: 1.4rem; color: var(--ink-soft); }
+footer { text-align: center; color: var(--ink-soft); font-size: 1.05rem; margin-top: 2.5rem; }
+footer .heart { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="saint-figure" viewBox="0 0 120 120">
+    <g stroke="#B0842B" stroke-width="2.4" stroke-linecap="round">
+      <path d="M60 8 V0 M60 8 V0 M42 12 L38 5 M78 12 L82 5 M30 24 L23 19 M90 24 L97 19 M25 40 L17 39 M95 40 L103 39"/>
+    </g>
+    <circle cx="60" cy="40" r="24" fill="none" stroke="#B0842B" stroke-width="3.2"/>
+    <g stroke="#43301F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M32 116 C 30 88 42 66 60 66 C 78 66 90 88 88 116 Z" fill="#6E8CA8"/>
+      <path d="M60 66 C 54 78 54 100 56 116 M60 66 C 66 78 66 100 64 116" fill="none" stroke-width="2.4"/>
+      <path d="M46 92 C 52 86 68 86 74 92 C 70 104 66 108 60 108 C 54 108 50 104 46 92 Z" fill="#F6E7CE"/>
+      <circle cx="60" cy="40" r="16" fill="#F6E7CE"/>
+      <path d="M52 39 C 55 42 59 42 61 39 M59 39 C 61 42 65 42 68 39" fill="none" stroke-width="2.4"/>
+      <path d="M55 48 C 57 50 63 50 65 48" fill="none" stroke-width="2.2"/>
+    </g>
+  </symbol>
+  <symbol id="fleuron" viewBox="0 0 24 24">
+    <g fill="#B0842B"><circle cx="12" cy="6" r="3.2"/><circle cx="18" cy="10.5" r="3.2"/><circle cx="15.8" cy="17.5" r="3.2"/><circle cx="8.2" cy="17.5" r="3.2"/><circle cx="6" cy="10.5" r="3.2"/></g>
+    <circle cx="12" cy="12" r="2.6" fill="#FFFCF5"/>
+  </symbol>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div style="text-align:left"><a class="backlink" href="/">&larr; Dodo&rsquo;s Digest</a></div>
+    <hr class="rule">
+    <svg class="masthead-saint" aria-hidden="true"><use href="#saint-figure"/></svg>
+    <p class="edition-line">✨ The Saints Edition ✨</p>
+    <h1 class="title">Lives of the Saints</h1>
+    <p class="sub">Twelve holy friends &mdash; their stories, and the beautiful art painted in their honor. Tap a saint to read.</p>
+    <hr class="rule">
+  </header>
+
+  <main>
+    <div class="grid" id="grid">
+      <p class="state" id="state">Gathering the saints&hellip;</p>
+    </div>
+  </main>
+
+  <footer><p>Made with love for Dodo <span class="heart">&#10084;</span></p></footer>
+</div>
+
+<script>
+"use strict";
+function el(t, c, x) { const n = document.createElement(t); if (c) n.className = c; if (x !== undefined) n.textContent = x; return n; }
+
+function card(s) {
+  const a = document.createElement("a");
+  a.className = "saint-card";
+  a.href = "/saints/" + s.slug;
+  const halo = el("div", "halo");
+  halo.setAttribute("aria-hidden", "true");
+  halo.textContent = s.emoji;
+  a.appendChild(halo);
+  a.appendChild(el("p", "name", s.name));
+  a.appendChild(el("p", "feast", "Feast: " + s.feast));
+  a.appendChild(el("p", "patron", s.patron));
+  a.appendChild(el("p", "read", "Read the story →"));
+  return a;
+}
+
+async function load() {
+  const grid = document.getElementById("grid");
+  try {
+    const res = await fetch("/api/saints");
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    grid.innerHTML = "";
+    (data.saints || []).forEach((s) => grid.appendChild(card(s)));
+  } catch (err) {
+    grid.innerHTML = '<p class="state">The saints will be here in a moment — please try again shortly. ✨</p>';
+    setTimeout(load, 4000);
+  }
+}
+load();
+</script>
+</body>
+</html>
