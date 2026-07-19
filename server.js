@@ -6,6 +6,7 @@ const sources = require("./lib/sources");
 const pool = require("./lib/pool");
 const ratings = require("./lib/ratings");
 const feed = require("./lib/feed");
+const octopus = require("./lib/octopus");
 
 const PORT = process.env.PORT || 3003;
 
@@ -37,10 +38,21 @@ app.get("/api/feed", (req, res) => {
   res.json(body);
 });
 
+// The pearl-octopus gallery: real, licensed photos with full provenance.
+app.get("/api/octopus", async (req, res) => {
+  try {
+    const items = await octopus.getGallery();
+    res.json({ items });
+  } catch (err) {
+    console.error("[dodos-digest] octopus gallery failed:", err);
+    res.json({ items: [] });
+  }
+});
+
 // Only store media URLs that point at the content hosts we actually serve
 // from — anything else rendered later on the grownups page would be a
 // stored-content injection into MK's browser.
-const ALLOWED_MEDIA_HOSTS = /(^|\.)thecatapi\.com$|^cataas\.com$|(^|\.)pexels\.com$/i;
+const ALLOWED_MEDIA_HOSTS = /(^|\.)thecatapi\.com$|^cataas\.com$|(^|\.)pexels\.com$|^upload\.wikimedia\.org$|(^|\.)inaturalist\.org$|^inaturalist-open-data\.s3\.amazonaws\.com$|^iiif\.mcz\.harvard\.edu$/i;
 function safeMediaUrl(value) {
   if (typeof value !== "string" || !value || value.length > 2000) return null;
   try {
@@ -139,9 +151,12 @@ if (process.env.NODE_ENV !== "production") {
 
 app.use(express.static(path.join(__dirname, "public")));
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("/cats", (req, res) => res.sendFile(path.join(__dirname, "public", "cats", "index.html")));
+app.get("/octopus", (req, res) => res.sendFile(path.join(__dirname, "public", "octopus", "index.html")));
 
 ratings.init();
 pool.warmUp().catch((err) => console.error("[dodos-digest] warm-up failed:", err));
+octopus.warmUp().catch((err) => console.error("[dodos-digest] octopus warm-up failed:", err));
 
 const server = app.listen(PORT, () => {
   console.log(`[dodos-digest] listening on port ${PORT}`);

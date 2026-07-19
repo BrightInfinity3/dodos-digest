@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Octopus Edition · Dodo's Digest 🐙</title>
+<meta name="description" content="Meet the pearl octopus of the deep sea — real photos and the true story.">
+<meta name="theme-color" content="#FBF1E0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Dodo's">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23FBF1E0'/%3E%3Ctext y='72' x='50' text-anchor='middle' font-size='58'%3E🐙%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #FBF1E0; --card: #FFFCF5; --ink: #43301F; --ink-soft: #6B543D;
+  --accent: #A34823; --peach: #FFD9B8; --blush: #F2B8A0;
+  --octo: #6E5A8C; --octo-soft: #EAE4F1; --deep: #24506B; --real: #2E6B3F;
+  --shadow: 0 4px 14px rgba(67, 48, 31, 0.10);
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans: 'Atkinson Hyperlegible', 'Segoe UI', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--sans); font-size: 1.375rem; line-height: 1.55; overflow-x: hidden;
+}
+.wrap { max-width: 40rem; margin: 0 auto; padding: 0 1rem 3rem; }
+:focus-visible { outline: 3px solid var(--deep); outline-offset: 2px; border-radius: 0.5rem; }
+.visually-hidden { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+a { color: var(--deep); }
+
+/* Masthead */
+header { text-align: center; padding-top: 0.5rem; }
+.rule { border: none; border-top: 2px solid var(--deep); margin: 0.5rem 0; }
+.backlink {
+  display: inline-flex; align-items: center; min-height: 2.75rem; gap: 0.35rem;
+  padding: 0.5rem 0.9rem; margin-bottom: 0.25rem; color: var(--accent);
+  font-weight: 700; font-size: 1.125rem; text-decoration: none; touch-action: manipulation;
+}
+.masthead-octo { width: 7rem; height: 7rem; margin-bottom: -0.6rem; }
+.edition-line { font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 1.25rem; color: var(--octo); margin: 0.25rem 0; }
+h1.title { font-family: var(--serif); font-weight: 900; font-size: clamp(2.25rem, 10vw, 3.4rem); line-height: 1.08; margin: 0.25rem 0 0.5rem; }
+.dateline { font-size: 1.125rem; color: var(--ink-soft); margin: 0.25rem 0 0.75rem; }
+
+.lead { font-size: 1.45rem; line-height: 1.5; margin: 1.25rem 0; }
+.lead .drop { font-family: var(--serif); font-weight: 900; color: var(--octo); }
+
+h2.sec {
+  font-family: var(--serif); font-weight: 900; font-size: 1.9rem; line-height: 1.15;
+  margin: 2.25rem 0 0.5rem; color: var(--deep);
+}
+h2.sec .emo { font-size: 1.5rem; }
+p.body { margin: 0.75rem 0; }
+
+/* Fact chips */
+.facts { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1rem 0 0.5rem; padding: 0; list-style: none; }
+.facts li {
+  background: var(--octo-soft); color: var(--ink); border-radius: 1rem;
+  padding: 0.5rem 0.9rem; font-size: 1.05rem; font-weight: 700;
+}
+.pullquote {
+  font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 1.5rem;
+  color: var(--octo); border-left: 5px solid var(--octo); padding: 0.4rem 0 0.4rem 1rem; margin: 1.25rem 0;
+}
+
+/* Gallery */
+.gallery-intro {
+  background: var(--octo-soft); border-radius: 1.25rem; padding: 1.1rem 1.25rem; margin: 1rem 0 1.5rem;
+  font-size: 1.2rem;
+}
+.gallery-intro strong { color: var(--deep); }
+.photo-card {
+  background: var(--card); border: 2px solid var(--octo-soft); border-radius: 1.25rem;
+  box-shadow: var(--shadow); overflow: hidden; margin: 0 0 1.75rem;
+}
+.photo-card.featured { border-color: var(--octo); border-width: 3px; }
+.frame {
+  position: relative; width: 100%; aspect-ratio: 4/3; background: var(--octo-soft);
+  cursor: zoom-in;
+}
+.frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.4s ease; }
+.frame.loaded img { opacity: 1; }
+.frame .ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.frame .ph svg { width: 40%; opacity: 0.8; }
+.frame.loaded .ph { display: none; }
+.badge-real {
+  position: absolute; top: 0.7rem; left: 0.7rem; background: var(--real); color: #fff;
+  font-size: 0.95rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 1rem;
+  box-shadow: var(--shadow);
+}
+.caption { padding: 1rem 1.15rem 1.15rem; }
+.caption .species { font-family: var(--serif); font-weight: 900; font-style: italic; font-size: 1.35rem; color: var(--ink); margin: 0 0 0.15rem; }
+.caption .rel { display: inline-block; font-size: 1rem; font-weight: 700; color: var(--octo); background: var(--octo-soft); border-radius: 0.8rem; padding: 0.2rem 0.6rem; margin-bottom: 0.5rem; }
+.caption .rel.exact { color: #fff; background: var(--octo); }
+.caption .note { margin: 0.4rem 0 0.6rem; font-size: 1.15rem; }
+.caption .credit { font-size: 1.05rem; color: var(--ink-soft); margin: 0.5rem 0 0; }
+.caption .credit a { color: var(--deep); }
+.love-btn {
+  margin-top: 0.9rem; min-height: 3.25rem; width: 100%;
+  background: var(--card); border: 2px solid var(--blush); border-radius: 1rem;
+  font-family: var(--sans); font-size: 1.25rem; font-weight: 700; color: var(--accent);
+  cursor: pointer; touch-action: manipulation;
+}
+.love-btn.loved { background: var(--blush); color: var(--ink); border-color: var(--blush); }
+
+/* Vintage plates aside */
+.plates { background: var(--card); border: 2px dashed var(--peach); border-radius: 1.25rem; padding: 1rem 1.15rem; margin: 0 0 1.75rem; }
+.plates h3 { font-family: var(--serif); font-weight: 900; font-size: 1.4rem; color: var(--accent); margin: 0 0 0.25rem; }
+.plates .pg { display: grid; grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr)); gap: 0.75rem; margin-top: 0.75rem; }
+.plates .pg figure { margin: 0; }
+.plates .pg img { width: 100%; border-radius: 0.6rem; background: #fff; display: block; }
+.plates .pg figcaption { font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.25rem; }
+
+/* MBARI / see-more box */
+.seemore { background: var(--deep); color: #FBF1E0; border-radius: 1.25rem; padding: 1.5rem; margin: 2rem 0; text-align: center; }
+.seemore h2 { font-family: var(--serif); font-weight: 900; font-size: 1.7rem; margin: 0 0 0.5rem; color: #fff; }
+.seemore p { margin: 0 0 1rem; font-size: 1.2rem; }
+.seemore a.btn {
+  display: block; background: #FBF1E0; color: var(--deep); text-decoration: none;
+  font-weight: 700; font-size: 1.25rem; border-radius: 1rem; padding: 0.9rem 1rem; margin: 0.6rem 0;
+  min-height: 3.5rem; display: flex; align-items: center; justify-content: center;
+}
+
+.sources { font-size: 1.05rem; color: var(--ink-soft); margin-top: 2.5rem; border-top: 2px solid var(--peach); padding-top: 1rem; }
+.sources h3 { font-family: var(--serif); font-size: 1.3rem; color: var(--ink); margin: 0 0 0.5rem; }
+.sources li { margin: 0.35rem 0; }
+
+footer { text-align: center; color: var(--ink-soft); font-size: 1.05rem; margin-top: 2rem; }
+footer .heart { color: var(--accent); }
+
+/* Loading / empty state */
+.state { text-align: center; padding: 1.5rem; background: var(--card); border: 2px solid var(--octo-soft); border-radius: 1.25rem; }
+.state svg { width: 45%; max-width: 10rem; }
+.state p { font-family: var(--serif); font-weight: 600; font-size: 1.4rem; margin: 0.75rem 0 0; }
+
+/* Lightbox */
+.lightbox {
+  position: fixed; inset: 0; z-index: 80; background: rgba(31, 24, 15, 0.92);
+  display: none; flex-direction: column; align-items: center; justify-content: center; padding: 1rem;
+}
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 72vh; border-radius: 0.75rem; object-fit: contain; }
+.lightbox .lb-cap { color: #FBF1E0; text-align: center; margin-top: 1rem; font-size: 1.15rem; max-width: 40rem; }
+.lightbox .lb-cap a { color: #FFD9B8; }
+.lightbox .lb-close {
+  position: absolute; top: 1rem; right: 1rem; min-width: 3.5rem; min-height: 3.5rem;
+  background: #FBF1E0; color: var(--ink); border: none; border-radius: 50%;
+  font-size: 1.75rem; font-weight: 700; cursor: pointer; touch-action: manipulation;
+}
+
+#celebrate { position: fixed; inset: 0; pointer-events: none; z-index: 90; }
+
+@media (prefers-reduced-motion: reduce) {
+  .frame img { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="octo-mascot" viewBox="0 0 120 120">
+    <g stroke="#43301F" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 74 C 22 92 14 96 8 94 C 14 100 22 100 28 96 M40 84 C 36 102 30 110 22 110 C 30 112 40 108 44 98 M60 88 C 60 106 60 112 56 116 C 66 114 66 104 66 90 M80 84 C 84 102 90 110 98 110 C 90 112 80 108 76 98 M90 74 C 98 92 106 96 112 94 C 106 100 98 100 92 96" fill="#B7A6D6"/>
+      <path d="M60 20 C 88 20 102 44 100 68 C 98 86 82 92 60 92 C 38 92 22 86 20 68 C 18 44 32 20 60 20 Z" fill="#B7A6D6"/>
+      <circle cx="46" cy="58" r="8.5" fill="#FFFFFF"/><circle cx="47" cy="60" r="4" fill="#43301F" stroke="none"/>
+      <circle cx="74" cy="58" r="8.5" fill="#FFFFFF"/><circle cx="75" cy="60" r="4" fill="#43301F" stroke="none"/>
+      <path d="M52 74 C 56 78 64 78 68 74" fill="none" stroke-width="2.6"/>
+      <circle cx="42" cy="40" r="4.5" fill="#EDE6F5" stroke="none"/>
+      <circle cx="66" cy="34" r="3" fill="#EDE6F5" stroke="none"/>
+    </g>
+  </symbol>
+  <symbol id="octo-sleep" viewBox="0 0 120 120">
+    <g stroke="#43301F" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 78 C 24 92 16 96 10 94 C 16 100 24 99 30 95 M44 86 C 40 100 34 106 26 106 C 34 109 44 105 48 96 M60 88 C 60 102 60 108 57 112 C 66 110 66 102 66 90 M76 86 C 80 100 86 106 94 106 C 86 109 76 105 72 96 M90 78 C 96 92 104 96 110 94 C 104 100 96 99 90 95" fill="#B7A6D6"/>
+      <path d="M60 24 C 88 24 102 46 100 68 C 98 86 82 92 60 92 C 38 92 22 86 20 68 C 18 46 32 24 60 24 Z" fill="#B7A6D6"/>
+      <path d="M38 58 C 42 54 50 54 54 58 M66 58 C 70 54 78 54 82 58" fill="none" stroke-width="2.8"/>
+      <path d="M52 74 C 56 77 64 77 68 74" fill="none" stroke-width="2.6"/>
+    </g>
+    <g font-family="Georgia,serif" font-style="italic" fill="#6B543D">
+      <text x="96" y="40" font-size="13">z</text><text x="108" y="26" font-size="17">z</text>
+    </g>
+  </symbol>
+  <symbol id="fleuron" viewBox="0 0 24 24">
+    <g fill="#24506B"><circle cx="12" cy="6" r="3.2"/><circle cx="18" cy="10.5" r="3.2"/><circle cx="15.8" cy="17.5" r="3.2"/><circle cx="8.2" cy="17.5" r="3.2"/><circle cx="6" cy="10.5" r="3.2"/></g>
+    <circle cx="12" cy="12" r="2.6" fill="#B7A6D6"/>
+  </symbol>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div style="text-align:left"><a class="backlink" href="/">&larr; Dodo&rsquo;s Digest</a></div>
+    <hr class="rule">
+    <svg class="masthead-octo" aria-hidden="true"><use href="#octo-mascot"/></svg>
+    <p class="edition-line">🐙 The Octopus Edition 🐙</p>
+    <h1 class="title">Meet the Pearl Octopus</h1>
+    <p class="dateline" id="dateline"></p>
+    <hr class="rule">
+  </header>
+
+  <main>
+    <p class="lead"><span class="drop">Deep, deep down</span> in the cold Pacific &mdash; about two miles below the waves &mdash; lives a shy little octopus the color of a pale purple pearl. Thousands of them gather in one secret spot to raise their babies. Here is the true story, told with real photos.</p>
+
+    <div class="gallery-intro">
+      <strong>About these pictures:</strong> every photo below is a <strong>real photograph</strong> taken by scientists, museums, and deep-sea explorers &mdash; never made by a computer. Tap any picture to see it bigger. 🔬
+    </div>
+
+    <section id="gallery" aria-label="Real octopus photos">
+      <div class="state" id="gallery-state">
+        <svg aria-hidden="true" viewBox="0 0 120 120"><use href="#octo-sleep"/></svg>
+        <p>Fetching real photos from the deep&hellip;</p>
+      </div>
+    </section>
+
+    <h2 class="sec"><span class="emo">🫧</span> A grapefruit in the dark</h2>
+    <p class="body">The pearl octopus (scientists call it <em>Muusoctopus robustus</em>) is only about the size of a grapefruit. It has soft, pale-purple skin and no ink sac &mdash; there is no need to hide in ink when you live in near-total darkness. It roams the muddy deep-sea floor of the northeast Pacific, from Oregon all the way down to Baja California, hunting small fish and shellfish and tidying up whatever scraps drift down from above.</p>
+    <ul class="facts">
+      <li>🐙 About grapefruit-sized</li>
+      <li>💜 Pale purple</li>
+      <li>🌊 1,200&ndash;3,900 m deep</li>
+      <li>📍 Oregon &rarr; Baja California</li>
+    </ul>
+
+    <h2 class="sec"><span class="emo">🏡</span> The Octopus Garden</h2>
+    <p class="body">In 2018, explorers guiding a robot submarine over an old underwater volcano called Davidson Seamount &mdash; about 80 miles off the coast of central California &mdash; found something no one had ever seen. Thousands upon thousands of octopuses, huddled together on the seafloor. Scientists now think more than <strong>20,000</strong> pearl octopuses gather there. It is the largest known gathering of octopuses anywhere on Earth, and they nicknamed it the &ldquo;Octopus Garden.&rdquo;</p>
+    <p class="pullquote">The nesting mothers, curled upside-down, shimmer in the dark like a field of pearls &mdash; which is how the octopus got its name.</p>
+
+    <h2 class="sec"><span class="emo">🔥</span> Why so many? A warm secret</h2>
+    <p class="body">For a long time the gathering was a mystery. Why would shy, solitary octopuses crowd into one spot? The answer, discovered by scientists at the Monterey Bay Aquarium Research Institute, is hidden in the rock: warm water seeps up through cracks in the old volcano, like a gentle deep-sea hot spring.</p>
+    <p class="body">Down there the sea is a frigid 35&deg;F, but inside those warm crevices it reaches about 51&deg;F. That warmth is the whole secret. It speeds up how fast the eggs grow &mdash; turning what could be many years of waiting into under two &mdash; so far more babies survive to hatch.</p>
+    <ul class="facts">
+      <li>🌡️ Sea around: ~35&deg;F</li>
+      <li>♨️ Warm cracks: ~51&deg;F</li>
+      <li>🥚 Eggs grow faster &amp; safer</li>
+    </ul>
+
+    <h2 class="sec"><span class="emo">💜</span> A mother&rsquo;s whole life</h2>
+    <p class="body">A pearl octopus mother gives everything for her babies. She fastens her eggs to the rock, turns herself upside down, and wraps around them to keep them safe. Then she waits &mdash; for nearly two years &mdash; guarding, cleaning, and gently blowing fresh water over the eggs. She never leaves and never eats again. When at last the tiny octopuses hatch and drift away, her long watch is over. It is one of the most devoted acts of motherhood in all the ocean.</p>
+    <p class="body">The whole Octopus Garden is now protected inside the Monterey Bay National Marine Sanctuary, so these gentle mothers can keep their watch in peace.</p>
+
+    <div class="seemore">
+      <h2>See the living pearl octopus 🎥</h2>
+      <p>Living pearl octopuses are far too deep to visit &mdash; but the scientists who found them share real robot-submarine footage on their website.</p>
+      <a class="btn" href="https://www.mbari.org/animal/pearl-octopus/" target="_blank" rel="noopener">Pearl octopus at MBARI &rarr;</a>
+      <a class="btn" href="https://www.mbari.org/project/the-octopus-garden/" target="_blank" rel="noopener">Visit the Octopus Garden &rarr;</a>
+    </div>
+
+    <div class="sources">
+      <h3>Where this came from</h3>
+      <p>All facts are drawn from real marine science, and every photo is credited to its source. With thanks to:</p>
+      <ul>
+        <li>Monterey Bay Aquarium Research Institute (MBARI) &mdash; discovery &amp; research</li>
+        <li>Barry et al., 2023, <em>Science Advances</em> &mdash; the Octopus Garden study</li>
+        <li>NOAA Ocean Exploration &mdash; deep-sea photographs</li>
+        <li>iNaturalist &amp; GBIF &mdash; open science photo records</li>
+        <li>Wikimedia Commons &mdash; freely-licensed images</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer><p>Made with love for Dodo <span class="heart">&#10084;</span></p></footer>
+</div>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged photo">
+  <button class="lb-close" id="lb-close" aria-label="Close photo">&times;</button>
+  <img id="lb-img" alt="">
+  <div class="lb-cap" id="lb-cap"></div>
+</div>
+
+<canvas id="celebrate" aria-hidden="true"></canvas>
+<div class="visually-hidden" aria-live="polite" id="announcer"></div>
+
+<script>
+"use strict";
+const RATINGS_KEY = "dd-ratings", OUTBOX_KEY = "dd-outbox";
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function el(t, c, x) { const n = document.createElement(t); if (c) n.className = c; if (x !== undefined) n.textContent = x; return n; }
+function loadLS(k, f) { try { const r = localStorage.getItem(k); return r === null ? f : JSON.parse(r); } catch (e) { return f; } }
+function saveLS(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function announce(t) { const a = document.getElementById("announcer"); a.textContent = ""; requestAnimationFrame(() => { a.textContent = t; }); }
+
+document.getElementById("dateline").textContent =
+  new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+
+let ratings = loadLS(RATINGS_KEY, {});
+let outbox = loadLS(OUTBOX_KEY, []);
+
+/* ---- Ratings (love only, shared with the rest of the Digest) ---- */
+function sendPayload(payload) {
+  return fetch("/api/rating", {
+    method: "POST", headers: { "Content-Type": "application/json" }, keepalive: true,
+    body: JSON.stringify(payload),
+  }).then((res) => {
+    if (res.ok) { const i = outbox.indexOf(payload); if (i !== -1) { outbox.splice(i, 1); saveLS(OUTBOX_KEY, outbox); } return true; }
+    return false;
+  }).catch(() => false);
+}
+function loveItem(item) {
+  ratings[item.id] = { rating: "up", ts: Date.now() };
+  saveLS(RATINGS_KEY, ratings);
+  const payload = { itemId: item.id, itemType: "photo", src: item.src, poster: null, source: item.source, credit: item.credit || null, rating: "up" };
+  outbox.push(payload); saveLS(OUTBOX_KEY, outbox); sendPayload(payload);
+}
+async function flushOutbox() {
+  if (!outbox.length) return;
+  for (const p of [...outbox]) { const ok = await sendPayload(p); if (!ok) break; }
+}
+
+/* ---- Gallery ---- */
+const $gallery = document.getElementById("gallery");
+
+function relTag(item) {
+  if (item.isExactSpecies) return { text: "the pearl octopus itself", cls: "rel exact" };
+  return { text: "a cousin of the pearl octopus", cls: "rel" };
+}
+
+function speciesNote(item) {
+  if (item.kind === "specimen") return "A preserved museum specimen — the only kind of pearl-octopus photo that can be shared freely. Living ones live far too deep to reach.";
+  if (item.isExactSpecies) return "";
+  return "A close relative in the same octopus family, photographed in the deep sea.";
+}
+
+function makeCard(item, eager) {
+  const card = el("article", "photo-card" + (item.kind === "specimen" ? " featured" : ""));
+  const frame = el("div", "frame");
+  frame.innerHTML = '<div class="ph"><svg aria-hidden="true" viewBox="0 0 120 120"><use href="#octo-sleep"/></svg></div>';
+  const img = new Image();
+  img.loading = eager ? "eager" : "lazy";
+  img.decoding = "async";
+  img.alt = item.species + (item.isExactSpecies ? "" : " (a deep-sea relative of the pearl octopus)");
+  img.addEventListener("load", () => frame.classList.add("loaded"));
+  img.addEventListener("error", () => card.remove());
+  img.src = item.src;
+  frame.appendChild(img);
+  frame.appendChild(el("span", "badge-real", "✓ Real photo"));
+  frame.addEventListener("click", () => openLightbox(item));
+  card.appendChild(frame);
+
+  const cap = el("div", "caption");
+  cap.appendChild(el("p", "species", item.species));
+  const rel = relTag(item);
+  cap.appendChild(el("span", rel.cls, rel.text));
+  const note = speciesNote(item);
+  if (note) cap.appendChild(el("p", "note", note));
+
+  const credit = el("p", "credit");
+  credit.append("Photo: ");
+  if (item.credit && item.credit.link) {
+    const a = el("a", null, item.credit.name || "source");
+    a.href = item.credit.link; a.target = "_blank"; a.rel = "noopener";
+    credit.appendChild(a);
+  } else { credit.append((item.credit && item.credit.name) || "source"); }
+  if (item.license) credit.append(" · " + item.license);
+  cap.appendChild(credit);
+
+  const loveBtn = el("button", "love-btn");
+  const already = ratings[item.id] && ratings[item.id].rating === "up";
+  loveBtn.textContent = already ? "❤ You love this one!" : "🤍 Love this one";
+  if (already) loveBtn.classList.add("loved");
+  loveBtn.addEventListener("click", (e) => {
+    if (loveBtn.classList.contains("loved")) return;
+    loveItem(item);
+    loveBtn.textContent = "❤ You love this one!";
+    loveBtn.classList.add("loved");
+    if (navigator.vibrate) navigator.vibrate(30);
+    burst(e.clientX || (e.target.getBoundingClientRect().left + 40), e.clientY || e.target.getBoundingClientRect().top);
+    announce("Saved — you love this one!");
+  });
+  cap.appendChild(loveBtn);
+  card.appendChild(cap);
+  return card;
+}
+
+function renderGallery(items) {
+  $gallery.innerHTML = "";
+  const photos = items.filter((it) => it.kind === "specimen" || it.kind === "photo");
+  const drawings = items.filter((it) => it.kind === "drawing");
+
+  if (photos.length === 0) {
+    const s = el("div", "state");
+    s.innerHTML = '<svg aria-hidden="true" viewBox="0 0 120 120"><use href="#octo-sleep"/></svg>';
+    s.appendChild(el("p", null, "The deep-sea photos are resting right now — please peek back in a little while. 💜"));
+    $gallery.appendChild(s);
+    return;
+  }
+  photos.forEach((item, i) => $gallery.appendChild(makeCard(item, i < 2)));
+
+  if (drawings.length) {
+    const aside = el("div", "plates");
+    aside.appendChild(el("h3", null, "🖋️ From the old science books"));
+    aside.appendChild(el("p", null, "Long before robot submarines, scientists drew these octopuses by hand. These are real illustrations from old scientific books."));
+    const pg = el("div", "pg");
+    drawings.forEach((d) => {
+      const fig = document.createElement("figure");
+      const im = new Image(); im.loading = "lazy"; im.src = d.thumb || d.src; im.alt = d.species + " (historical drawing)";
+      im.addEventListener("error", () => fig.remove());
+      im.addEventListener("click", () => openLightbox(d));
+      im.style.cursor = "zoom-in";
+      fig.appendChild(im);
+      fig.appendChild(el("figcaption", null, d.species));
+      pg.appendChild(fig);
+    });
+    aside.appendChild(pg);
+    $gallery.appendChild(aside);
+  }
+}
+
+async function loadGallery() {
+  try {
+    const res = await fetch("/api/octopus");
+    if (!res.ok) throw new Error("http " + res.status);
+    const data = await res.json();
+    renderGallery(data.items || []);
+  } catch (err) {
+    $gallery.innerHTML = "";
+    const s = el("div", "state");
+    s.innerHTML = '<svg aria-hidden="true" viewBox="0 0 120 120"><use href="#octo-sleep"/></svg>';
+    s.appendChild(el("p", null, "The deep-sea photos are resting right now — please peek back in a little while. 💜"));
+    $gallery.appendChild(s);
+  }
+}
+
+/* ---- Lightbox ---- */
+const lb = document.getElementById("lightbox");
+const lbImg = document.getElementById("lb-img");
+const lbCap = document.getElementById("lb-cap");
+const lbClose = document.getElementById("lb-close");
+let lastFocus = null;
+
+function openLightbox(item) {
+  lastFocus = document.activeElement;
+  lbImg.src = item.src;
+  lbImg.alt = item.species;
+  lbCap.innerHTML = "";
+  const sp = el("strong", null, item.species + (item.isExactSpecies ? " — the pearl octopus" : " — a deep-sea cousin"));
+  lbCap.appendChild(sp);
+  const line = el("div");
+  line.append((item.credit && item.credit.name ? "Photo: " + item.credit.name : "") + (item.license ? " · " + item.license : ""));
+  lbCap.appendChild(line);
+  lb.classList.add("open");
+  lbClose.focus();
+}
+function closeLightbox() {
+  lb.classList.remove("open");
+  lbImg.src = "";
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
+}
+lbClose.addEventListener("click", closeLightbox);
+lb.addEventListener("click", (e) => { if (e.target === lb) closeLightbox(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && lb.classList.contains("open")) closeLightbox(); });
+
+/* ---- Celebration hearts ---- */
+const canvas = document.getElementById("celebrate");
+const ctx = canvas.getContext("2d");
+const COLORS = ["#6E5A8C", "#B7A6D6", "#D96C4F", "#E8B04B"];
+let particles = [], raf = false;
+function sizeCanvas() { const d = window.devicePixelRatio || 1; canvas.width = innerWidth * d; canvas.height = innerHeight * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+sizeCanvas(); window.addEventListener("resize", sizeCanvas);
+function burst(x, y) {
+  if (reducedMotion) {
+    particles.push({ x, y: y - 30, vx: 0, vy: 0, life: 1, decay: 0.02, size: 24, rot: 0, vr: 0, color: COLORS[0], still: true });
+  } else {
+    for (let i = 0; i < 16; i++) particles.push({
+      x, y, vx: (Math.random() - 0.5) * 5, vy: -(3.5 + Math.random() * 3),
+      life: 1, decay: 0.012 + Math.random() * 0.008, size: 11 + Math.random() * 14,
+      rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.2, color: COLORS[i % COLORS.length],
+    });
+  }
+  if (!raf) { raf = true; requestAnimationFrame(tick); }
+}
+function heart(s) { ctx.beginPath(); ctx.moveTo(0, s * 0.35); ctx.bezierCurveTo(-s * 0.55, -s * 0.1, -s * 0.3, -s * 0.55, 0, -s * 0.2); ctx.bezierCurveTo(s * 0.3, -s * 0.55, s * 0.55, -s * 0.1, 0, s * 0.35); ctx.fill(); }
+function tick() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (const p of particles) {
+    if (!p.still) { p.x += p.vx; p.y += p.vy; p.vy += 0.16; p.rot += p.vr; }
+    p.life -= p.decay; if (p.life <= 0) continue;
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 1.4)); ctx.fillStyle = p.color; heart(p.size); ctx.restore();
+  }
+  particles = particles.filter((p) => p.life > 0);
+  if (particles.length) requestAnimationFrame(tick); else { raf = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+}
+
+/* ---- Boot ---- */
+loadGallery();
+flushOutbox();
+window.addEventListener("online", flushOutbox);
+</script>
+</body>
+</html>
