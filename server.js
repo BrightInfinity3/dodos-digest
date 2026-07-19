@@ -149,10 +149,12 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-app.use(express.static(path.join(__dirname, "public")));
+// Clean page routes BEFORE static, so /cats and /octopus serve directly (200)
+// instead of static issuing a trailing-slash 301 redirect to /cats/.
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
 app.get("/cats", (req, res) => res.sendFile(path.join(__dirname, "public", "cats", "index.html")));
 app.get("/octopus", (req, res) => res.sendFile(path.join(__dirname, "public", "octopus", "index.html")));
+app.use(express.static(path.join(__dirname, "public")));
 
 ratings.init();
 pool.warmUp().catch((err) => console.error("[dodos-digest] warm-up failed:", err));
