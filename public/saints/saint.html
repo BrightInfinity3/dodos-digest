@@ -105,7 +105,7 @@ footer .heart { color: var(--accent); }
     <div class="symbols" id="symbols-slot" hidden><strong>Look for these in the paintings:</strong> <span id="symbols"></span></div>
 
     <h2 class="sec">🖼️ In sacred art</h2>
-    <p class="gallery-intro">Every picture below is a <strong>real painting</strong> by a real artist, shared from museums and Wikimedia Commons — never made by a computer. Tap a painting to see it larger.</p>
+    <p class="gallery-intro">Every picture below is a <strong>real work of art</strong> &mdash; a painting, icon, or fresco of this saint &mdash; shared from museums and Wikimedia Commons, never made by a computer. Tap one to see it larger.</p>
     <section id="gallery" aria-label="Real paintings of this saint">
       <div class="state" id="gallery-state">Fetching beautiful paintings…</div>
     </section>
@@ -143,10 +143,23 @@ let ratings = loadLS(RATINGS_KEY, {});
 let outbox = loadLS(OUTBOX_KEY, []);
 
 /* ---- Saint story ---- */
+function showNotFound() {
+  galleryLoaded = true; // stop the gallery's own retry loop
+  document.getElementById("name").textContent = "Saint not found";
+  document.getElementById("story").innerHTML =
+    '<p>We couldn’t find that saint. <a href="/saints">See all the saints →</a></p>';
+  const g = document.getElementById("gallery"); if (g) g.innerHTML = "";
+  const sec = document.querySelector("h2.sec"); if (sec) sec.style.display = "none";
+  const gi = document.querySelector(".gallery-intro"); if (gi) gi.style.display = "none";
+}
+
+let saintAttempts = 0, saintLoaded = false;
 async function loadSaint() {
+  if (saintLoaded) return;
   try {
     const res = await fetch("/api/saints/" + encodeURIComponent(slug));
-    if (!res.ok) throw new Error();
+    if (res.status === 404) { showNotFound(); return; }   // truly unknown saint
+    if (!res.ok) throw new Error("transient");             // 5xx / blip → retry
     const s = await res.json();
     document.title = s.name + " · Dodo's Digest ✨";
     document.getElementById("halo").textContent = s.emoji || "✨";
@@ -156,7 +169,7 @@ async function loadSaint() {
     const patron = document.getElementById("patron");
     patron.innerHTML = "";
     patron.append("Patron of ");
-    patron.appendChild(el("strong", null, (s.patron || "").replace(/^./, (c) => c.toLowerCase())));
+    patron.appendChild(el("strong", null, s.patron || ""));
     const story = document.getElementById("story");
     (s.story || []).forEach((p) => story.appendChild(el("p", null, p)));
     if (s.quote) {
@@ -167,11 +180,16 @@ async function loadSaint() {
       document.getElementById("symbols").textContent = s.symbols;
       document.getElementById("symbols-slot").hidden = false;
     }
+    saintLoaded = true;
   } catch (err) {
-    document.getElementById("name").textContent = "Saint not found";
-    document.getElementById("story").innerHTML =
-      '<p>We couldn’t find that saint. <a href="/saints">See all the saints →</a></p>';
-    document.getElementById("gallery-state").textContent = "";
+    // Network blip on a real saint — keep trying quietly, don't cry "not found".
+    saintAttempts++;
+    if (saintAttempts < 8) {
+      document.getElementById("name").textContent = "Just a moment…";
+      setTimeout(loadSaint, 4000);
+    } else {
+      showNotFound();
+    }
   }
 }
 
@@ -205,7 +223,7 @@ function makeCard(item, eager) {
   img.addEventListener("error", () => { if (navigator.onLine) card.remove(); else brokenImgs.push({ img, src: item.src }); });
   img.src = item.src;
   frame.appendChild(img);
-  frame.appendChild(el("span", "badge-real", "✓ Real painting"));
+  frame.appendChild(el("span", "badge-real", "✓ Real artwork"));
   frame.addEventListener("click", () => openLightbox(item));
   card.appendChild(frame);
 
@@ -223,7 +241,7 @@ function makeCard(item, eager) {
 
   const loveBtn = el("button", "love-btn");
   const already = ratings[item.id] && ratings[item.id].rating === "up";
-  loveBtn.textContent = already ? "❤ You love this one!" : "🤍 Love this painting";
+  loveBtn.textContent = already ? "❤ You love this one!" : "🤍 Love this artwork";
   if (already) loveBtn.classList.add("loved");
   loveBtn.addEventListener("click", (e) => {
     if (loveBtn.classList.contains("loved")) return;
@@ -312,7 +330,7 @@ function tick() {
 loadSaint();
 loadGallery();
 flushOutbox();
-window.addEventListener("online", () => { if (!galleryLoaded) loadGallery(); retryBrokenImages(); flushOutbox(); });
+window.addEventListener("online", () => { if (!saintLoaded) loadSaint(); if (!galleryLoaded) loadGallery(); retryBrokenImages(); flushOutbox(); });
 </script>
 </body>
 </html>
