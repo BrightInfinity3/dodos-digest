@@ -8,6 +8,7 @@ const ratings = require("./lib/ratings");
 const feed = require("./lib/feed");
 const octopus = require("./lib/octopus");
 const saints = require("./lib/saints");
+const animals = require("./lib/animals");
 
 const PORT = process.env.PORT || 3003;
 
@@ -66,6 +67,14 @@ app.get("/api/saints/:slug", (req, res) => {
   const saint = saints.get(req.params.slug);
   if (!saint) return res.status(404).json({ error: "unknown saint" });
   res.json(saint);
+});
+
+// The Animal Fun Facts Edition: 24 animals, each with 24 cute true facts.
+app.get("/api/animals", (req, res) => res.json({ animals: animals.list() }));
+app.get("/api/animals/:slug", (req, res) => {
+  const animal = animals.get(req.params.slug);
+  if (!animal) return res.status(404).json({ error: "unknown animal" });
+  res.json(animal);
 });
 
 // Only store media URLs that point at the content hosts we actually serve
@@ -176,6 +185,13 @@ app.get("/octopus", (req, res) => res.sendFile(path.join(__dirname, "public", "o
 app.get("/saints", (req, res) => res.sendFile(path.join(__dirname, "public", "saints", "index.html")));
 // Each saint's own page — the template reads the slug from the path.
 app.get("/saints/:slug", (req, res) => res.sendFile(path.join(__dirname, "public", "saints", "saint.html")));
+app.get("/animals", (req, res) => res.sendFile(path.join(__dirname, "public", "animals", "index.html")));
+// Slugs never contain a dot; anything that does (e.g. a static asset) falls
+// through to express.static below rather than being served the HTML template.
+app.get("/animals/:slug", (req, res, next) => {
+  if (req.params.slug.includes(".")) return next();
+  res.sendFile(path.join(__dirname, "public", "animals", "animal.html"));
+});
 app.use(express.static(path.join(__dirname, "public")));
 
 ratings.init();

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animal Fun Facts · Dodo's Digest 🐾</title>
+<meta name="description" content="Two dozen cute fun facts about each of our 24 game animals.">
+<meta name="theme-color" content="#FBF1E0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Dodo's">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23FBF1E0'/%3E%3Ctext y='72' x='50' text-anchor='middle' font-size='58'%3E%F0%9F%90%BE%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #FBF1E0; --card: #FFFCF5; --ink: #43301F; --ink-soft: #6B543D;
+  --accent: #A34823; --fun: #5A7D3C; --fun-deep: #40602A; --fun-soft: #E4EFD9;
+  --shadow: 0 4px 14px rgba(67, 48, 31, 0.10);
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans: 'Atkinson Hyperlegible', 'Segoe UI', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 1.375rem; line-height: 1.5; overflow-x: hidden; }
+.wrap { max-width: 44rem; margin: 0 auto; padding: 0 1rem 3rem; }
+:focus-visible { outline: 3px solid var(--fun-deep); outline-offset: 2px; border-radius: 0.5rem; }
+
+header { text-align: center; padding-top: 0.5rem; }
+.rule { border: none; border-top: 2px solid var(--fun); margin: 0.5rem 0; }
+.backlink { display: inline-flex; align-items: center; min-height: 2.75rem; gap: 0.35rem; padding: 0.5rem 0.9rem; margin-bottom: 0.25rem; color: var(--accent); font-weight: 700; font-size: 1.125rem; text-decoration: none; touch-action: manipulation; }
+.masthead-paw { width: 5.5rem; height: 5.5rem; margin-bottom: 0.1rem; }
+.edition-line { font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 1.25rem; color: var(--fun-deep); margin: 0.25rem 0; }
+h1.title { font-family: var(--serif); font-weight: 900; font-size: clamp(2.1rem, 9vw, 3.2rem); line-height: 1.08; margin: 0.25rem 0 0.4rem; }
+.sub { font-size: 1.2rem; color: var(--ink-soft); margin: 0.25rem 0 0.75rem; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr)); gap: 1rem; margin-top: 1.25rem; }
+.animal-card {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  background: var(--card); border: 2px solid var(--fun-soft); border-radius: 1.25rem;
+  box-shadow: var(--shadow); padding: 1rem 0.75rem; text-decoration: none; color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.animal-card:active { transform: scale(0.98); }
+.animal-card:hover { box-shadow: 0 8px 22px rgba(67,48,31,0.16); }
+.animal-card .sprite {
+  width: 5.75rem; height: 5.75rem; border-radius: 1.1rem; background: var(--fun-soft);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;
+}
+.animal-card .sprite img { width: 94%; height: 94%; display: block; object-fit: contain; }
+.animal-card .name { font-family: var(--serif); font-weight: 900; font-size: 1.3rem; margin: 0 0 0.2rem; }
+.animal-card .blurb { font-size: 0.98rem; color: var(--ink-soft); margin: 0; line-height: 1.35; }
+.animal-card .read { margin-top: 0.5rem; font-weight: 700; color: var(--fun-deep); font-size: 1rem; }
+
+.state { text-align: center; padding: 2rem 1rem; font-family: var(--serif); font-size: 1.4rem; color: var(--ink-soft); }
+footer { text-align: center; color: var(--ink-soft); font-size: 1.05rem; margin-top: 2.5rem; }
+footer .heart { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="paw" viewBox="0 0 120 120">
+    <g fill="#5A7D3C" stroke="#43301F" stroke-width="3.2" stroke-linejoin="round">
+      <path d="M60 70 C 43 70 33 83 33 95 C 33 107 46 111 60 111 C 74 111 87 107 87 95 C 87 83 77 70 60 70 Z"/>
+      <ellipse cx="35" cy="60" rx="9" ry="12.5" transform="rotate(-16 35 60)"/>
+      <ellipse cx="52" cy="45" rx="9" ry="13"/>
+      <ellipse cx="68" cy="45" rx="9" ry="13"/>
+      <ellipse cx="85" cy="60" rx="9" ry="12.5" transform="rotate(16 85 60)"/>
+    </g>
+  </symbol>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div style="text-align:left"><a class="backlink" href="/">&larr; Dodo&rsquo;s Digest</a></div>
+    <hr class="rule">
+    <svg class="masthead-paw" aria-hidden="true"><use href="#paw"/></svg>
+    <p class="edition-line">🐾 Animal Fun Facts 🐾</p>
+    <h1 class="title">Our 24 Animals</h1>
+    <p class="sub">The very same critters from our games! Tap any animal to read two dozen cute fun facts about them.</p>
+    <hr class="rule">
+  </header>
+
+  <main>
+    <div class="grid" id="grid"><p class="state" id="state">Rounding up the animals&hellip;</p></div>
+  </main>
+
+  <footer><p>Made with love for Dodo <span class="heart">&#10084;</span></p></footer>
+</div>
+
+<script src="/animals/sprites.js"></script>
+<script>
+"use strict";
+function el(t, c, x) { const n = document.createElement(t); if (c) n.className = c; if (x !== undefined) n.textContent = x; return n; }
+
+function card(a) {
+  const link = document.createElement("a");
+  link.className = "animal-card";
+  link.href = "/animals/" + a.slug;
+  const sprite = el("div", "sprite");
+  const src = window.SpriteEngine && SpriteEngine.getSprite(a.slug);
+  if (src) { const img = new Image(); img.src = src; img.alt = a.name; sprite.appendChild(img); }
+  else { sprite.textContent = a.emoji || "🐾"; sprite.style.fontSize = "2.5rem"; }
+  link.appendChild(sprite);
+  link.appendChild(el("p", "name", a.name));
+  link.appendChild(el("p", "blurb", a.blurb));
+  link.appendChild(el("p", "read", "24 fun facts →"));
+  return link;
+}
+
+async function load() {
+  const grid = document.getElementById("grid");
+  try {
+    const res = await fetch("/api/animals");
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    grid.innerHTML = "";
+    (data.animals || []).forEach((a) => grid.appendChild(card(a)));
+  } catch (err) {
+    grid.innerHTML = '<p class="state">The animals will be here in a moment — please try again shortly. 🐾</p>';
+    setTimeout(load, 4000);
+  }
+}
+load();
+</script>
+</body>
+</html>

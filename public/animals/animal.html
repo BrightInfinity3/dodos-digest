@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>An Animal · Dodo's Digest 🐾</title>
+<meta name="description" content="Two dozen cute fun facts.">
+<meta name="theme-color" content="#FBF1E0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Dodo's">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%23FBF1E0'/%3E%3Ctext y='72' x='50' text-anchor='middle' font-size='58'%3E%F0%9F%90%BE%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #FBF1E0; --card: #FFFCF5; --ink: #43301F; --ink-soft: #6B543D;
+  --accent: #A34823; --blush: #F2B8A0; --fun: #5A7D3C; --fun-deep: #40602A; --fun-soft: #E4EFD9;
+  --shadow: 0 4px 14px rgba(67, 48, 31, 0.10);
+  --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --sans: 'Atkinson Hyperlegible', 'Segoe UI', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 1.375rem; line-height: 1.5; overflow-x: hidden; }
+.wrap { max-width: 40rem; margin: 0 auto; padding: 0 1rem 3rem; }
+:focus-visible { outline: 3px solid var(--fun-deep); outline-offset: 2px; border-radius: 0.5rem; }
+.visually-hidden { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+header { text-align: center; padding-top: 0.5rem; }
+.rule { border: none; border-top: 2px solid var(--fun); margin: 0.5rem 0; }
+.backrow { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.backlink { display: inline-flex; align-items: center; min-height: 2.75rem; gap: 0.35rem; padding: 0.5rem 0.9rem; color: var(--accent); font-weight: 700; font-size: 1.125rem; text-decoration: none; touch-action: manipulation; }
+.sprite-big { width: 9.5rem; height: 9.5rem; margin: 0.25rem auto 0.25rem; border-radius: 1.6rem; background: var(--fun-soft); display: flex; align-items: center; justify-content: center; }
+.sprite-big img { width: 92%; height: 92%; display: block; object-fit: contain; }
+h1.name { font-family: var(--serif); font-weight: 900; font-size: clamp(2.2rem, 9vw, 3.2rem); line-height: 1.1; margin: 0.4rem 0 0.3rem; }
+.blurb { font-size: 1.3rem; color: var(--ink-soft); margin: 0.25rem 0 0.5rem; }
+.nicks { font-size: 1.1rem; color: var(--fun-deep); margin: 0.25rem 0 0.75rem; }
+.nicks strong { font-weight: 700; }
+
+.love-btn { display: block; margin: 0.5rem auto 0.5rem; min-height: 3.5rem; padding: 0.6rem 1.5rem; background: var(--card); border: 2px solid var(--blush); border-radius: 1.25rem; font-family: var(--sans); font-size: 1.35rem; font-weight: 700; color: var(--accent); cursor: pointer; touch-action: manipulation; }
+.love-btn.loved { background: var(--blush); color: var(--ink); }
+
+.facts-title { font-family: var(--serif); font-weight: 900; font-size: 1.7rem; color: var(--fun-deep); text-align: center; margin: 1.5rem 0 1rem; }
+.fact { display: flex; gap: 0.9rem; align-items: flex-start; background: var(--card); border: 2px solid var(--fun-soft); border-radius: 1rem; box-shadow: var(--shadow); padding: 1rem 1.1rem; margin: 0 0 0.9rem; }
+.fact .num { flex: none; width: 2.4rem; height: 2.4rem; border-radius: 50%; background: var(--fun-soft); color: var(--fun-deep); font-family: var(--serif); font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+.fact .text { margin: 0; }
+.state { text-align: center; padding: 1.5rem; font-family: var(--serif); font-size: 1.35rem; color: var(--ink-soft); }
+footer { text-align: center; color: var(--ink-soft); font-size: 1.05rem; margin-top: 2rem; }
+footer .heart { color: var(--accent); }
+#celebrate { position: fixed; inset: 0; pointer-events: none; z-index: 90; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="backrow">
+      <a class="backlink" href="/animals">&larr; All Animals</a>
+      <a class="backlink" href="/">Dodo&rsquo;s Digest</a>
+    </div>
+    <hr class="rule">
+    <div class="sprite-big" id="sprite" aria-hidden="true"></div>
+    <h1 class="name" id="name">…</h1>
+    <p class="blurb" id="blurb"></p>
+    <p class="nicks" id="nicks"></p>
+    <button class="love-btn" id="love" hidden>🤍 Love this animal</button>
+    <hr class="rule">
+  </header>
+
+  <main>
+    <h2 class="facts-title" id="facts-title">24 Fun Facts</h2>
+    <div id="facts"><p class="state" id="facts-state">Fetching fun facts…</p></div>
+  </main>
+
+  <footer><p>Made with love for Dodo <span class="heart">&#10084;</span></p></footer>
+</div>
+
+<canvas id="celebrate" aria-hidden="true"></canvas>
+<div class="visually-hidden" aria-live="polite" id="announcer"></div>
+
+<script src="/animals/sprites.js"></script>
+<script>
+"use strict";
+const LOVES_KEY = "dd-animal-loves";
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function el(t, c, x) { const n = document.createElement(t); if (c) n.className = c; if (x !== undefined) n.textContent = x; return n; }
+function loadLS(k, f) { try { const r = localStorage.getItem(k); return r === null ? f : JSON.parse(r); } catch (e) { return f; } }
+function saveLS(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function announce(t) { const a = document.getElementById("announcer"); a.textContent = ""; requestAnimationFrame(() => { a.textContent = t; }); }
+
+const slug = decodeURIComponent(location.pathname.replace(/\/+$/, "").split("/").pop() || "");
+let loves = loadLS(LOVES_KEY, {});
+let loaded = false, attempts = 0;
+
+function renderSprite(animal) {
+  const box = document.getElementById("sprite");
+  const src = window.SpriteEngine && SpriteEngine.getSprite(slug);
+  if (src) { const img = new Image(); img.src = src; img.alt = animal.name; box.appendChild(img); }
+  else { box.textContent = animal.emoji || "🐾"; box.style.fontSize = "4rem"; }
+}
+
+function setupLove(animal) {
+  const btn = document.getElementById("love");
+  btn.hidden = false;
+  const already = !!loves[slug];
+  btn.textContent = already ? "❤ You love " + animal.name + "s!" : "🤍 Love this animal";
+  if (already) btn.classList.add("loved");
+  btn.addEventListener("click", (e) => {
+    if (btn.classList.contains("loved")) return;
+    loves[slug] = Date.now(); saveLS(LOVES_KEY, loves);
+    btn.textContent = "❤ You love " + animal.name + "s!";
+    btn.classList.add("loved");
+    if (navigator.vibrate) navigator.vibrate(30);
+    const r = btn.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top);
+    announce("You love " + animal.name + "s!");
+  });
+}
+
+async function load() {
+  if (loaded) return;
+  try {
+    const res = await fetch("/api/animals/" + encodeURIComponent(slug));
+    if (res.status === 404) { showNotFound(); return; }
+    if (!res.ok) throw new Error("transient");
+    const a = await res.json();
+    loaded = true;
+    document.title = a.name + " Fun Facts · Dodo's Digest 🐾";
+    document.getElementById("name").textContent = a.name;
+    document.getElementById("blurb").textContent = a.blurb || "";
+    renderSprite(a);
+    if (a.nicks && a.nicks.length) {
+      const n = document.getElementById("nicks");
+      n.append("Also known in our games as ");
+      n.appendChild(el("strong", null, a.nicks.join(", ")));
+      n.append(" 🎮");
+    }
+    setupLove(a);
+    const facts = a.facts || [];
+    document.getElementById("facts-title").textContent = facts.length + " Fun Facts";
+    const box = document.getElementById("facts");
+    box.innerHTML = "";
+    if (facts.length === 0) { box.appendChild(el("p", "state", "More fun facts are on their way! 🐾")); return; }
+    facts.forEach((f, i) => {
+      const row = el("div", "fact");
+      row.appendChild(el("div", "num", String(i + 1)));
+      row.appendChild(el("p", "text", f));
+      box.appendChild(row);
+    });
+  } catch (err) {
+    attempts++;
+    if (attempts < 8) { document.getElementById("name").textContent = "Just a moment…"; setTimeout(load, 4000); }
+    else showNotFound();
+  }
+}
+
+function showNotFound() {
+  loaded = true;
+  document.getElementById("name").textContent = "Animal not found";
+  document.getElementById("blurb").textContent = "";
+  document.getElementById("facts").innerHTML = '<p class="state">We couldn’t find that animal. <a href="/animals">See all the animals →</a></p>';
+  document.getElementById("facts-title").style.display = "none";
+}
+
+/* Celebration hearts */
+const canvas = document.getElementById("celebrate"), ctx = canvas.getContext("2d");
+const COLORS = ["#5A7D3C", "#D96C4F", "#F2B8A0", "#E8B04B"];
+let particles = [], raf = false;
+function sizeCanvas() { const d = window.devicePixelRatio || 1; canvas.width = innerWidth * d; canvas.height = innerHeight * d; ctx.setTransform(d, 0, 0, d, 0, 0); }
+sizeCanvas(); window.addEventListener("resize", sizeCanvas);
+function burst(x, y) {
+  if (reducedMotion) { particles.push({ x, y: y - 30, vx: 0, vy: 0, life: 1, decay: 0.02, size: 24, rot: 0, vr: 0, color: COLORS[0], still: true }); }
+  else { for (let i = 0; i < 16; i++) particles.push({ x, y, vx: (Math.random() - 0.5) * 5, vy: -(3.5 + Math.random() * 3), life: 1, decay: 0.012 + Math.random() * 0.008, size: 11 + Math.random() * 14, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.2, color: COLORS[i % COLORS.length] }); }
+  if (!raf) { raf = true; requestAnimationFrame(tick); }
+}
+function heart(s) { ctx.beginPath(); ctx.moveTo(0, s * 0.35); ctx.bezierCurveTo(-s * 0.55, -s * 0.1, -s * 0.3, -s * 0.55, 0, -s * 0.2); ctx.bezierCurveTo(s * 0.3, -s * 0.55, s * 0.55, -s * 0.1, 0, s * 0.35); ctx.fill(); }
+function tick() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (const p of particles) {
+    if (!p.still) { p.x += p.vx; p.y += p.vy; p.vy += 0.16; p.rot += p.vr; }
+    p.life -= p.decay; if (p.life <= 0) continue;
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.globalAlpha = Math.max(0, Math.min(1, p.life * 1.4)); ctx.fillStyle = p.color; heart(p.size); ctx.restore();
+  }
+  particles = particles.filter((p) => p.life > 0);
+  if (particles.length) requestAnimationFrame(tick); else { raf = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+}
+
+load();
+window.addEventListener("online", () => { if (!loaded) load(); });
+</script>
+</body>
+</html>

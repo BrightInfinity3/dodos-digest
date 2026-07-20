@@ -70,6 +70,7 @@ h1.wordmark {
 .edition.cats .icon { background: #FFF0D4; }
 .edition.octopus .icon { background: #EAE4F1; }
 .edition.saints .icon { background: #F4E7C6; }
+.edition.animals .icon { background: #E4EFD9; }
 .edition.soon .icon { background: #F3E4DF; }
 /* flex-basis keeps the text on the icon's row normally, but lets it wrap to a
    full row below the icon when the OS font size is cranked up (no clipping). */
@@ -159,6 +160,16 @@ footer .heart { color: var(--accent); }
       <path d="M55 48 C 57 50 63 50 65 48" fill="none" stroke-width="2.2"/>
     </g>
   </symbol>
+  <!-- Paw print (animal fun facts) -->
+  <symbol id="glyph-paw" viewBox="0 0 120 120">
+    <g fill="#C0724A" stroke="#43301F" stroke-width="3.2" stroke-linejoin="round">
+      <path d="M60 70 C 43 70 33 83 33 95 C 33 107 46 111 60 111 C 74 111 87 107 87 95 C 87 83 77 70 60 70 Z"/>
+      <ellipse cx="35" cy="60" rx="9" ry="12.5" transform="rotate(-16 35 60)"/>
+      <ellipse cx="52" cy="45" rx="9" ry="13"/>
+      <ellipse cx="68" cy="45" rx="9" ry="13"/>
+      <ellipse cx="85" cy="60" rx="9" ry="12.5" transform="rotate(16 85 60)"/>
+    </g>
+  </symbol>
   <!-- Ladybug glyph (for the coming-soon card) -->
   <symbol id="glyph-bug" viewBox="0 0 120 120">
     <g stroke="#43301F" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
@@ -213,11 +224,20 @@ footer .heart { color: var(--accent); }
       </span>
     </a>
 
+    <a class="edition animals" href="/animals">
+      <span class="icon" aria-hidden="true"><svg viewBox="0 0 120 120"><use href="#glyph-paw"/></svg></span>
+      <span class="body">
+        <span class="title">Animal Fun Facts</span>
+        <p class="blurb">Two dozen cute facts about each of the 24 animals from our games.</p>
+        <span class="go">Open &rarr;</span>
+      </span>
+    </a>
+
     <div class="edition soon" aria-hidden="true">
       <span class="icon"><svg viewBox="0 0 120 120"><use href="#glyph-bug"/></svg></span>
       <span class="body">
         <span class="title">More coming soon</span>
-        <p class="blurb">Ladybugs, dodos, and more of your favorite critters are on the way.</p>
+        <p class="blurb">Even more surprises are on the way, made with love. ❤</p>
       </span>
     </div>
   </main>
