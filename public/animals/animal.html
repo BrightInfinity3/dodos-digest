@@ -104,18 +104,20 @@ function renderSprite(animal) {
 function setupLove(animal) {
   const btn = document.getElementById("love");
   btn.hidden = false;
+  // "this " + name avoids naive +s pluralization (no "Octopuss" or "Deers").
+  const loveMsg = "❤ You love this " + animal.name.toLowerCase() + "!";
   const already = !!loves[slug];
-  btn.textContent = already ? "❤ You love " + animal.name + "s!" : "🤍 Love this animal";
+  btn.textContent = already ? loveMsg : "🤍 Love this animal";
   if (already) btn.classList.add("loved");
   btn.addEventListener("click", (e) => {
     if (btn.classList.contains("loved")) return;
     loves[slug] = Date.now(); saveLS(LOVES_KEY, loves);
-    btn.textContent = "❤ You love " + animal.name + "s!";
+    btn.textContent = loveMsg;
     btn.classList.add("loved");
     if (navigator.vibrate) navigator.vibrate(30);
     const r = btn.getBoundingClientRect();
     burst(r.left + r.width / 2, r.top);
-    announce("You love " + animal.name + "s!");
+    announce(loveMsg);
   });
 }
 
